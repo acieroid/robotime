@@ -106,23 +106,41 @@
 
 (defun cases-accross (c)
   "Return the cases accross "
-  (loop for dir in '((0 1) (1 0) (1 1) (0 -1) (-1 0) (-1 1) (1 -1))
+  (loop for dir in '((0 1) (1 0) (1 1) (0 -1) (-1 0) (-1 1) (1 -1) (-1 -1))
        for case = (list  (+ (first c) (first dir))
                          (+ (second c) (second dir)))
        when (in-board case)
        collect case))
 
+(defun take (n l)
+  (when (and l (plusp n))
+    (cons (first l) (take (1- n) (rest l)))))
+
 ;; TODO
-(defun malus-cases (n case &optional cases)
+(defun malus-cases (n case)
   "Return n cases that can be used for a malus, around (CENTER-X, CENTER-Y)"
-  (when (plusp n)
-    (let* ((count 0)
-           (new-cases (loop for c in (cases-accross case)
-                         when (and (< count n)
-                                   (not (find c cases :test #'case=)))
-                         collect c
-                         do (incf count))))
-      (nconc cases new-cases))))
+  (labels ((next-cases (c cases)
+             (remove-if (lambda (x)
+                          (find x cases :test #'case=))
+                        (cases-accross c)))
+           (rec (n cases)
+             (let ((count 0)
+                   (new-cases cases))
+               (loop for c in cases
+                  while (< count n)
+                  do (let* ((cs (next-cases c new-cases))
+                            (length (length cs)))
+                       (if (> length (- n count))
+                           (progn
+                             (nconc new-cases (take (- n count) cs))
+                             (setf count n))
+                           (progn
+                             (nconc new-cases cs)
+                             (incf count length)))))
+               (if (< count n)
+                   (rec (- n count) new-cases)
+                   new-cases))))
+    (rec (1- n) (list case))))
 
 (defclass power-malus (malus)
   ((letter :initform #\p)

@@ -26,11 +26,7 @@
                                                           :x 10 :y 4)
                                            (make-instance 'power-malus
                                                           :time-born 0
-                                                          :cases '((0 0)
-                                                                   (0 1)
-                                                                   (1 0)
-                                                                   (2 0)
-                                                                   (2 1))))))
+                                                          :cases (malus-cases 10 '(5 5))))))
   (:default-initargs :title "Robotime"
     :fps-limit 30
     :width 600
