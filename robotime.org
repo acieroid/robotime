@@ -1,0 +1,64 @@
+* Robotime
+Basiquement, un [[http://en.wikipedia.org/wiki/Robots_(computer_game)][robots]]-like, mais avec des différences.
+** Contrôle du temps
+*** Faire avancer le temps
+Le joueur peut, à tout moment, avancer dans le temps. Lui ne bougera
+pas, mais les robots bougeront et continueront à se diriger vers le
+joueur. S'ils l'atteignent, il mourra.
+
+   - [ ] Il ne faut pas que le joueur voie tout ce qu'il se passe, on
+     peut par exemple faire apparaître un brouillard autour de lui, de
+     façon à cacher la majorité des robots (voir tous)
+*** Reculer dans le temps
+Le joueur peut aussi, quand il a les pouvoirs suffisants, faire
+reculer le temps. Les robots retourneront donc sur leurs
+chemins. Attention, si le joueur se trouve sur le chemin d'un robot,
+il mourra.
+
+** Jauge de pouvoir
+La jauge de pouvoir permet au joueur de faire reculer le temps. Son
+niveau augmentera quand:
+  - Le joueur fera avancer le temps
+  - Le joueur rammassera des bonus de pouvoir ou des débris de robots
+** Robots
+Les robots se déplacent vers le joueur. Ils sont détruits soit via un
+bonus interférences, soit en entrant en collision avec un autre robot.
+
+Lorsqu'ils sont détruits, il reste un tas de circuits électroniques,
+que le joueur peut ramasser pour gagner du pouvoir.
+
+Lorsque le joueur recule dans le temps et qu'un tas de circuits
+atteint l'époque à laquelle il est mort, le robot rescussite (sauf si
+le tas de circuits a été rammassé) et retourne sur ses pas.
+
+Quand le temps avance après avoir reculé, les robots ne prennent pas
+spécialement la même direction qu'avant, vu que les conditions de jeu
+ont changées.
+
+** Bonus
+Au fur et à mesure du jeu, des bonus apparaissent sur la carte.
+  - Bonus de pouvoir: fait augmenter le niveau de la jauge de
+    pouvoir. Bonus le plus fréquent
+  - Bonus bonus: fait augmenter la fréquence d'apparition des bonus.
+  - Bonus malus: fait diminuer la fréquence d'apparition des malus
+  - Bonus interférences: provoque des interférences qui détruisent les
+    robots présents dans un certain rayon.
+
+Attention, quand le temps remonte, les bonus non ramassés
+réapparaissent, mais pas ceux qui ont déjà été ramassés
+Les bonus restent affichés pour une durée limitée.
+
+** Malus
+Les malus apparraissent sous forme de zones assez grandes pour forcer
+le joueur à y aller.
+  - Malus robot: fait réapparaître un robot dans le jeu
+  - Malus pouvoir: fait diminuer le niveau de pouvoir du joueur
+  - Malus bonus: fait diminuer la fréquence d'apparition des bonus
+  - Malus malus: fait augmenter la fréquence d'apparition des malus
+
+** Niveaux
+Une fois que tous les robots d'un niveau sont morts, on passe au
+niveau suivant avec:
+  - Plus de robots au départ
+  - Une fréquence de bonus moins élevée et de bonus plus élevée
+  - Une jauge de pouvoir plus petite
