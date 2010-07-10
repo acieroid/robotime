@@ -64,5 +64,5 @@ niveau suivant avec:
   - Une jauge de pouvoir plus petite
 
 ** Plateau
-Le plateau de jeu est carré, constitué de 18 cases de côté, chacune de
-taille 32x32.
+Le plateau de jeu est carré, constitué de 32 cases de côté, chacune de
+taille 16x16.

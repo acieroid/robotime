@@ -3,10 +3,13 @@
   '((quit . :escape)))
 
 (defclass robotime (uid:simple-game-engine)
-  ()
-  (:default-initargs :fps-limit 30))
+  ((board :reader board :initform (make-instance 'board)))
+  (:default-initargs :title "Robotime"
+    :fps-limit 30
+    :width 600
+    :height 800))
 
-(defvar *engine* (make-instance 'robotime))  ; for debugging purposes only
+(defparameter *engine* (make-instance 'robotime))  ; for debugging purposes only
 
 (defun run ()
   (uid:run *engine*))
@@ -17,7 +20,8 @@
                                   :size *font-size*)))
 
 (defmethod uid:on-draw ((game robotime))
-  (uid:clear game))
+  (uid:clear game)
+  (draw (board game)))
 
 (defmacro defkey (action &body body)
   `(defmethod uid:on-key-down ((game robotime) keycode
