@@ -4,7 +4,8 @@
   ((time-born :reader time-born :initarg :time-born)
    (time-died :accessor time-died :initform -1)
    (positions :accessor positions :initform '())
-   (color :reader color :initarg :color)))
+   (color :reader color :initarg :color)
+   (useless :accessor uselessp :initform nil)))
 
 (defgeneric collision (entity entity)
   (:documentation "Handle a collision between two entities"))
@@ -59,6 +60,11 @@
 (defmethod move ((player player) direction forwardp)
   (declare (ignore forwardp)))
 
+(defmethod add-power ((player player) value)
+  (setf (power player)
+        (min (max-power player)
+             (max 0 (+ (power player) value)))))
+
 ;;; Bonus
 (defclass bonus (entity)
   ((letter :reader letter)
@@ -68,6 +74,9 @@
   (when (alivep bonus)
     (draw-letter-in-case (x bonus) (y bonus) (letter bonus))))
 
+(defmethod collision :after ((player player) (bonus bonus))
+  (setf (uselessp bonus) t))
+
 (defclass power-bonus (bonus)
   ((letter :initform #\p)
    (value :accessor value :initform 10)))
@@ -75,25 +84,25 @@
 ;; TODO: don't just kill it, but completely remove it
 (defmethod collision ((player player) (bonus power-bonus))
   (when (alivep bonus)
-    (setf (power player) (min (max-power player)
-                              (+ (power player) (value bonus))))
-    (kill bonus)))
+    (add-power player (value bonus))))
 
 ;;; Malus
-(defclass malus (entity)
-  ((cases :reader cases :initarg :cases)))
+(defclass malus (bonus)
+  ((color :initform *malus-color*)
+   (cases :reader cases :initarg :cases)))
 
 (defmethod draw ((malus malus))
   (when (alivep malus)
     (loop for (x y) in (cases malus)
-       do (draw-rectangle-in-case x y *case-size* :color *malus-color*))))
+       do (progn
+            (draw-rectangle-in-case x y *case-size* :color (color malus))
+            (draw-letter-in-case x y (letter malus))))))
 
 (defmethod pos= ((player player) (malus malus))
   (find t  (mapcar (lambda (pos)
                      (and (= (first pos) (x player))
                           (= (second pos) (y player))))
                    (cases malus))))
-
 
 (defun cases-accross (c)
   "Return the cases accross "
@@ -116,10 +125,10 @@
       (nconc cases new-cases))))
 
 (defclass power-malus (malus)
-  ((value :accessor value :initform 5)))
+  ((letter :initform #\p)
+   (value :accessor value :initform 5)))
 
 ;; TODO: same as for bonus
 (defmethod collision ((player player) (malus power-malus))
   (when (alivep malus)
-    (setf (power player) (max 0 (- (power player) (value malus))))
-    (kill malus)))
+    (add-power player (- (value malus)))))

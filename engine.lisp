@@ -22,8 +22,10 @@
    (player :reader player :initform (make-player))
    (entities :accessor entities :initform (list
                                            (make-instance 'power-bonus
+                                                          :time-born 0
                                                           :x 10 :y 4)
                                            (make-instance 'power-malus
+                                                          :time-born 0
                                                           :cases '((0 0)
                                                                    (0 1)
                                                                    (1 0)
@@ -49,13 +51,17 @@
 (defmethod update ((game robotime))
   "Method called aftear each movement"
   (incf *actual-time*)
-  (update-collisions game))
+  (update-collisions game)
+  (delete-entities game))
 
 (defmethod update-collisions ((game robotime))
   (mapcar (alexandria:curry #'collision (player game))
           (remove-if-not
            (alexandria:curry #'pos= (player game))
            (entities game))))
+
+(defmethod delete-entities ((game robotime))
+  (setf (entities game) (remove-if #'uselessp (entities game))))
 
 (defmethod uid:init ((game robotime))
   (setf uid:*font* (make-instance 'uid::ftgl-font
@@ -102,9 +108,9 @@
 ;; forwarding the time is just a simple wait for the moment
 (defkey forward
   (update game)
-  (incf (power (player game))))
+  (add-power (player game) 3))
 
 (defkey backward
   (decf *actual-time*)
   (update-collisions game)
-  (decf (power (player game))))
+  (add-power (player game) -3))
