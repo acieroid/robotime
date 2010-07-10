@@ -7,7 +7,9 @@
     (upleft . :b)
     (upright . :p)
     (downleft . :agrave)
-    (downright . :x))
+    (downright . :x)
+    (forward . (:espace :u))
+    (backward . :o))
   "The actions with the associated keybindings")
 
 (defvar *actual-time* 0 "The actual time of the game")
@@ -43,6 +45,10 @@
 
 (defmethod update ((game robotime))
   "Method called aftear each movement"
+  (incf *actual-time*)
+  (update-collisions game))
+
+(defmethod update-collisions ((game robotime))
   (mapcar (alexandria:curry #'collision (player game))
           (remove-if-not
            (alexandria:curry #'pos= (player game))
@@ -57,7 +63,8 @@
   (uid:clear game)
   (draw (player game))
   (mapcar #'draw (entities game))
-  (draw-power 550 10 (power (player game)) (max-power (player game)))
+  (draw-power (- (uid:width game) (* 2 *power-width*)) 10
+              (power (player game)) (max-power (player game)))
   (draw (board game)))
 
 (defmacro defkey (action &body body)
@@ -88,3 +95,13 @@
 (defdirections
     (up down left right upright upleft downright downleft)
     (:north :south :west :east :north-east :north-west :south-east :south-west))
+
+;; forwarding the time is just a simple wait for the moment
+(defkey forward
+  (update game)
+  (incf (power (player game))))
+
+(defkey backward
+  (decf *actual-time*)
+  (update-collisions game)
+  (decf (power (player game))))

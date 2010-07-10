@@ -30,7 +30,9 @@
     (setf (y entity) (+ (y entity) y))))
 
 (defmethod alivep ((entity entity))
-  (= (time-died entity) -1))
+  (and (< (time-born entity) *actual-time*)
+       (or (= (time-died entity) -1)
+           (> (time-died entity) *actual-time*))))
 
 (defmethod kill ((entity entity))
   (setf (time-died entity) *actual-time*))
