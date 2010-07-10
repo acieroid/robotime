@@ -42,7 +42,7 @@
   (when (alivep entity)
     (draw-rectangle-in-case (x entity) (y entity) *entity-size*
                             :color (color entity))))
-
+;;; Player
 (defclass player (entity)
   ((power :accessor power :initform 0)
    (max-power :accessor max-power :initform 100)
@@ -70,6 +70,7 @@
   ((letter :initform #\p)
    (value :accessor value :initform 10)))
 
+;; TODO: don't just kill it, but completely remove it
 (defmethod collision ((player player) (bonus power-bonus))
   (when (alivep bonus)
     (setf (power player) (min (max-power player)
@@ -91,9 +92,31 @@
                           (= (second pos) (y player))))
                    (cases malus))))
 
+
+(defun cases-accross (c)
+  "Return the cases accross "
+  (loop for dir in '((0 1) (1 0) (1 1) (0 -1) (-1 0) (-1 1) (1 -1))
+       for case = (list  (+ (first c) (first dir))
+                         (+ (second c) (second dir)))
+       when (in-board case)
+       collect case))
+
+;; TODO
+(defun malus-cases (n case &optional cases)
+  "Return n cases that can be used for a malus, around (CENTER-X, CENTER-Y)"
+  (when (plusp n)
+    (let* ((count 0)
+           (new-cases (loop for c in (cases-accross case)
+                         when (and (< count n)
+                                   (not (find c cases :test #'case=)))
+                         collect c
+                         do (incf count))))
+      (nconc cases new-cases))))
+
 (defclass power-malus (malus)
   ((value :accessor value :initform 5)))
 
+;; TODO: same as for bonus
 (defmethod collision ((player player) (malus power-malus))
   (when (alivep malus)
     (setf (power player) (max 0 (- (power player) (value malus))))

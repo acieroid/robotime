@@ -31,7 +31,6 @@
                       :color *power-color*)
   (uid:draw-rectangle x y *power-width* *power-height* :filledp nil))
 
-
 (defclass graphic-item ()
   ((x :accessor x :initarg :x :initform 0)
    (y :accessor y :initarg :y :initform 0)))
@@ -39,6 +38,15 @@
 (defgeneric draw (entity)
   (:documentation "Draw an entity on the board"))
 
+(defun case= (a b)
+  (and (= (first a) (first b))
+       (= (second a) (second b))))
+
 (defmethod pos= ((a graphic-item) (b graphic-item))
   (and (= (x a) (x b))
        (= (y a) (y b))))
+
+(defun in-board (c)
+  "return T if the case C is in the board"
+  (and (>= (first c) 0) (>= (second c) 0)
+       (< (first c) *n-cases*) (< (second c) *n-cases*)))
