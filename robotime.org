@@ -62,3 +62,7 @@ niveau suivant avec:
   - Plus de robots au départ
   - Une fréquence de bonus moins élevée et de bonus plus élevée
   - Une jauge de pouvoir plus petite
+
+** Plateau
+Le plateau de jeu est carré, constitué de 18 cases de côté, chacune de
+taille 32x32.
