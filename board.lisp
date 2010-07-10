@@ -1,7 +1,4 @@
-(defparameter *case-size* 16 "The size of a case of the board")
-(defparameter *n-cases* 32 "The number of cases on the board")
-
-(defclass board ()
+(defclass board (graphic-item)
   ((size :reader size :initform (* *n-cases* *case-size*))))
 
 (defmethod draw ((board board))

@@ -1,9 +1,13 @@
 (defparameter *font-size* 14)
 (defparameter *keys*
-  '((quit . :escape)))
+  '((quit . :escape))
+  "The actions with the associated keybindings")
+
+(defvar *actual-time* 0 "The actual time of the game")
 
 (defclass robotime (uid:simple-game-engine)
-  ((board :reader board :initform (make-instance 'board)))
+  ((board :reader board :initform (make-instance 'board))
+   (player :reader player :initform (make-player)))
   (:default-initargs :title "Robotime"
     :fps-limit 30
     :width 600
@@ -21,7 +25,8 @@
 
 (defmethod uid:on-draw ((game robotime))
   (uid:clear game)
-  (draw (board game)))
+  (draw (board game))
+  (draw (player game)))
 
 (defmacro defkey (action &body body)
   `(defmethod uid:on-key-down ((game robotime) keycode
