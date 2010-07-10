@@ -9,17 +9,24 @@ joueur. S'ils l'atteignent, il mourra.
    - [ ] Il ne faut pas que le joueur voie tout ce qu'il se passe, on
      peut par exemple faire apparaître un brouillard autour de lui, de
      façon à cacher la majorité des robots (voir tous)
+
 *** Reculer dans le temps
 Le joueur peut aussi, quand il a les pouvoirs suffisants, faire
 reculer le temps. Les robots retourneront donc sur leurs
 chemins. Attention, si le joueur se trouve sur le chemin d'un robot,
 il mourra.
 
+** Déplacement:
+Le joueur ansi que les robots peuvent se déplacer selon toutes les
+directions possibles (ligne droite et diagonale). Lorsque le joueur
+fait avancer ou reculer le temps, les robots bougent mais lui est immobile.
+
 ** Jauge de pouvoir
 La jauge de pouvoir permet au joueur de faire reculer le temps. Son
 niveau augmentera quand:
   - Le joueur fera avancer le temps
   - Le joueur rammassera des bonus de pouvoir ou des débris de robots
+
 ** Robots
 Les robots se déplacent vers le joueur. Ils sont détruits soit via un
 bonus interférences, soit en entrant en collision avec un autre robot.
@@ -43,6 +50,8 @@ Au fur et à mesure du jeu, des bonus apparaissent sur la carte.
   - Bonus malus: fait diminuer la fréquence d'apparition des malus
   - Bonus interférences: provoque des interférences qui détruisent les
     robots présents dans un certain rayon.
+  - Bonus pause: les robots s'arrêtent pendant un certain temps, mais
+    le joueur peut continuer à se déplacer
 
 Attention, quand le temps remonte, les bonus non ramassés
 réapparaissent, mais pas ceux qui ont déjà été ramassés
