@@ -10,6 +10,8 @@
 (defparameter *player-color* uid:*blue* "The color of the player")
 (defparameter *robot-color* uid:*red* "The color of the robots")
 (defparameter *bonus-color* uid:*green* "The color of a bonus")
+(defparameter *malus-color* (uid:make-color :red 1 :green 0 :blue 0 :alpha 0.4)
+  "The background color of a malus")
 
 (defun position-for-case (x y size)
   (list (+ 1 (* x *case-size*) (/ (- *case-size* size) 2))

@@ -55,6 +55,7 @@
 (defmethod move ((player player) direction forwardp)
   (declare (ignore forwardp)))
 
+;;; Bonus
 (defclass bonus (entity)
   ((letter :reader letter)
    (color :initform *bonus-color*)))
@@ -72,3 +73,26 @@
     (setf (power player) (min (max-power player)
                               (+ (power player) (value bonus))))
     (kill bonus)))
+
+;;; Malus
+(defclass malus (entity)
+  ((cases :reader cases :initarg :cases)))
+
+(defmethod draw ((malus malus))
+  (when (alivep malus)
+    (loop for (x y) in (cases malus)
+       do (draw-rectangle-in-case x y *case-size* :color *malus-color*))))
+
+(defmethod pos= ((player player) (malus malus))
+  (find t  (mapcar (lambda (pos)
+                     (and (= (first pos) (x player))
+                          (= (second pos) (y player))))
+                   (cases malus))))
+
+(defclass power-malus (malus)
+  ((value :accessor value :initform 5)))
+
+(defmethod collision ((player player) (malus power-malus))
+  (when (alivep malus)
+    (setf (power player) (max 0 (- (power player) (value malus))))
+    (kill malus)))

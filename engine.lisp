@@ -17,7 +17,13 @@
    (player :reader player :initform (make-player))
    (entities :accessor entities :initform (list
                                            (make-instance 'power-bonus
-                                                          :x 10 :y 4))))
+                                                          :x 10 :y 4)
+                                           (make-instance 'power-malus
+                                                          :cases '((0 0)
+                                                                   (0 1)
+                                                                   (1 0)
+                                                                   (2 0)
+                                                                   (2 1))))))
   (:default-initargs :title "Robotime"
     :fps-limit 30
     :width 600
@@ -49,10 +55,10 @@
 
 (defmethod uid:on-draw ((game robotime))
   (uid:clear game)
-  (draw (board game))
   (draw (player game))
   (mapcar #'draw (entities game))
-  (draw-power 550 10 (power (player game)) (max-power (player game))))
+  (draw-power 550 10 (power (player game)) (max-power (player game)))
+  (draw (board game)))
 
 (defmacro defkey (action &body body)
   (let* ((keys (cdr (assoc action *keys*)))
