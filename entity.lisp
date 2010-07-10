@@ -1,3 +1,5 @@
+(in-package :robotime)
+
 (defclass entity (graphic-item)
   ((time-born :reader time-born :initarg :time-born)
    (time-died :accessor time-died :initform -1)

@@ -1,3 +1,5 @@
+(in-package robotime)
+
 (defclass board (graphic-item)
   ((size :reader size :initform (* *n-cases* *case-size*))))
 

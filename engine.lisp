@@ -1,16 +1,19 @@
-(defparameter *keys*                    ; TODO: add qwerty bindings
-  '((quit . :escape)
-    (left . (:left :a))
-    (right . (:right :i))
-    (up . (:up :eacute))
-    (down . (:down :y))
-    (upleft . :b)
-    (upright . :p)
-    (downleft . :agrave)
-    (downright . :x)
-    (forward . (:espace :u))
-    (backward . :o))
-  "The actions with the associated keybindings")
+(in-package robotime)
+
+(eval-when (:compile-toplevel)
+  (defvar *keys*                        ; TODO: add qwerty bindings
+    '((quit . :escape)
+      (left . (:left :a))
+      (right . (:right :i))
+      (up . (:up :eacute))
+      (down . (:down :y))
+      (upleft . :b)
+      (upright . :p)
+      (downleft . :agrave)
+      (downright . :x)
+      (forward . (:espace :u))
+      (backward . :o))
+    "The actions with the associated keybindings"))
 
 (defvar *actual-time* 0 "The actual time of the game")
 

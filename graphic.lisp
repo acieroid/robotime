@@ -1,3 +1,5 @@
+(in-package robotime)
+
 ;; TODO: sort settings/parameters/vars
 (defparameter *font-size* 10)
 (defparameter *font-color* uid:*blue*)
