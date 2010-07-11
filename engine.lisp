@@ -51,9 +51,9 @@
   (delete-entities game))
 
 (defmethod update-collisions ((game robotime))
-  (mapcar (alexandria:curry #'collision (player game))
+  (mapcar (curry #'collision (player game))
           (remove-if-not
-           (alexandria:curry #'pos= (player game))
+           (curry #'pos= (player game))
            (entities game))))
 
 (defmethod delete-entities ((game robotime))
@@ -70,6 +70,8 @@
   (mapcar #'draw (entities game))
   (draw-power (- (uid:width game) (* 2 *power-width*)) 10
               (power (player game)) (max-power (player game)))
+  (uid:draw (format nil "time: ~a" *actual-time*)
+            :x 10 :y (- (uid:width game) 50))
   (draw (board game)))
 
 (defmacro defkey (action &body body)
