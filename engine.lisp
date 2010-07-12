@@ -20,13 +20,7 @@
 (defclass robotime (uid:simple-game-engine)
   ((board :reader board :initform (make-instance 'board))
    (player :reader player :initform (make-player))
-   (entities :accessor entities :initform (list
-                                           (make-instance 'power-bonus
-                                                          :time-born 0
-                                                          :x 10 :y 4)
-                                           (make-instance 'power-malus
-                                                          :time-born 0
-                                                          :cases (malus-cases 10 '(5 5))))))
+   (entities :accessor entities :initform nil))
   (:default-initargs :title "Robotime"
     :fps-limit 30
     :width 600
@@ -44,13 +38,22 @@
                    (cl-opengl-bindings:opengl-error #'dont-hang))
       (uid:run *engine*))))
 
+(defun reinit ()
+  (setf *actual-time* 0
+        *last-spawn* 0)
+  (setf *engine* (make-instance 'robotime))
+  (run))
+
 (defmethod update ((game robotime))
   "Method called aftear each movement"
   (incf *actual-time*)
-  (update-collisions game)
-  (delete-entities game))
+  (update-player-collisions game)
+  (delete-entities game)
+  (let ((new-bonus (spawn-bonus-when-needed (player game) (entities game))))
+    (when new-bonus
+      (push new-bonus (entities game)))))
 
-(defmethod update-collisions ((game robotime))
+(defmethod update-player-collisions ((game robotime))
   (mapcar (curry #'collision (player game))
           (remove-if-not
            (curry #'pos= (player game))
@@ -109,6 +112,7 @@
   (add-power (player game) 3))
 
 (defkey backward
-  (decf *actual-time*)
-  (update-collisions game)
-  (add-power (player game) -3))
+  (when (plusp (power (player game)))
+    (decf *actual-time*)
+    (update-player-collisions game)
+    (add-power (player game) -3)))

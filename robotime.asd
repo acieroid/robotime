@@ -7,4 +7,5 @@
                (:file "board" :depends-on ("package"))
                (:file "graphic" :depends-on ("package"))
                (:file "entity" :depends-on ("graphic"))
-               (:file "engine" :depends-on ("entity" "board"))))
+               (:file "bonus" :depends-on ("entity"))
+               (:file "engine" :depends-on ("entity" "board" "bonus"))))
