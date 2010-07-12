@@ -20,7 +20,8 @@
 (defclass robotime (uid:simple-game-engine)
   ((board :reader board :initform (make-instance 'board))
    (player :reader player :initform (make-player))
-   (entities :accessor entities :initform nil))
+   (entitie :accessor entities :initform nil)  ; TODO: rename as bonus
+   (robots :accessor robots :initform nil))
   (:default-initargs :title "Robotime"
     :fps-limit 30
     :width 600
@@ -47,17 +48,30 @@
 (defmethod update ((game robotime))
   "Method called aftear each movement"
   (incf *actual-time*)
-  (update-player-collisions game)
+  (update-player-collisions (player game) (entities game))
   (delete-entities game)
+  (mapcar (lambda (x) (move-robot x (player game))) (robots game))
+  (update-player-collisions (player game) (robots game))
+  (update-robots-collisions (robots game))
   (let ((new-bonus (spawn-bonus-when-needed (player game) (entities game))))
     (when new-bonus
       (push new-bonus (entities game)))))
 
-(defmethod update-player-collisions ((game robotime))
-  (mapcar (curry #'collision (player game))
-          (remove-if-not
-           (curry #'pos= (player game))
-           (entities game))))
+(defun update-player-collisions (player entities)
+  (mapcar (lambda (x)
+            (when (pos= x player)
+              (collision player x)))
+          entities))
+
+(defun update-robots-collisions (robots)
+  (when robots
+    (let ((robot (first robots))
+          (rest (rest robots)))
+      (mapcar (lambda (x)
+                (when (pos= x robot)
+                  (collision x robot)))
+              rest)
+      (update-robots-collisions rest))))
 
 (defmethod delete-entities ((game robotime))
   (setf (entities game) (remove-if #'uselessp (entities game))))
@@ -65,12 +79,15 @@
 (defmethod uid:init ((game robotime))
   (setf uid:*font* (make-instance 'uid::ftgl-font
                                   :filepath #P"font.ttf"
-                                  :size *font-size*)))
+                                  :size *font-size*))
+  (setf (robots game)
+         (spawn-robots 10 (list (x (player game)) (y (player game))))))
 
 (defmethod uid:on-draw ((game robotime))
   (uid:clear game)
   (draw (player game))
   (mapcar #'draw (entities game))
+  (mapcar #'draw (robots game))
   (draw-power (- (uid:width game) (* 2 *power-width*)) 10
               (power (player game)) (max-power (player game)))
   (uid:draw (format nil "time: ~a" *actual-time*)
@@ -114,5 +131,7 @@
 (defkey backward
   (when (plusp (power (player game)))
     (decf *actual-time*)
-    (update-player-collisions game)
+    (mapcar #'alivep (robots game))
+    (update-player-collisions (player game) (entities game))
+    (update-player-collisions (player game) (robots game))
     (add-power (player game) -3)))

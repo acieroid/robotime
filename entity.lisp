@@ -47,7 +47,7 @@
                             :color (color entity))))
 ;;; Player
 (defclass player (entity)
-  ((power :accessor power :initform 0)
+  ((power :accessor power :initform 50)
    (max-power :accessor max-power :initform 100)
    (color :initform *player-color*)))
 

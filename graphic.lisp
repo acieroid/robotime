@@ -37,12 +37,23 @@
   ((x :accessor x :initarg :x :initform 0)
    (y :accessor y :initarg :y :initform 0)))
 
-(defgeneric draw (entity)
-  (:documentation "Draw an entity on the board"))
+(defgeneric draw (item)
+  (:documentation "Draw an item on the board"))
+
+(defmethod item-position ((item graphic-item))
+  (list (x item) (y item)))
+
+(defmethod (setf item-position) (pos (item graphic-item))
+  (setf (x item) (first pos))
+  (setf (y item) (second pos)))
 
 (defun case= (a b)
   (and (= (first a) (first b))
        (= (second a) (second b))))
+
+(defun case+ (a b)
+  (list (+ (first a) (first b))
+        (+ (second a) (second b))))
 
 (defmethod pos= ((a graphic-item) (b graphic-item))
   (and (= (x a) (x b))

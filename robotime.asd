@@ -8,4 +8,5 @@
                (:file "graphic" :depends-on ("package"))
                (:file "entity" :depends-on ("graphic"))
                (:file "bonus" :depends-on ("entity"))
+               (:file "robot" :depends-on ("entity"))
                (:file "engine" :depends-on ("entity" "board" "bonus"))))

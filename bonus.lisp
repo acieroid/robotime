@@ -118,6 +118,7 @@
        when (not (find case cases :test #'case=))
        return case)))
 
+;; TODO: spawn malus too
 (defun spawn-bonus-when-needed (player entities)
   (when (spawn-needed)
     (let ((bonus (random-bonus (find-free-case player entities))))
