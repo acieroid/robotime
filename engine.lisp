@@ -80,8 +80,9 @@
   (setf uid:*font* (make-instance 'uid::ftgl-font
                                   :filepath #P"font.ttf"
                                   :size *font-size*))
-  (setf (robots game)
-         (spawn-robots 10 (list (x (player game)) (y (player game))))))
+  (when (null (robots game))
+    (setf (robots game)
+          (spawn-robots 10 (item-position (player game))))))
 
 (defmethod uid:on-draw ((game robotime))
   (uid:clear game)
@@ -131,7 +132,7 @@
 (defkey backward
   (when (plusp (power (player game)))
     (decf *actual-time*)
-    (mapcar #'alivep (robots game))
     (update-player-collisions (player game) (entities game))
     (update-player-collisions (player game) (robots game))
+    (mapcar #'move-backward (robots game))
     (add-power (player game) -3)))

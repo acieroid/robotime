@@ -45,7 +45,9 @@
       (push (item-position robot) (positions robot))
       (setf (item-position robot) (case+ (item-position robot) direction)))))
 
-(defmethod backward ((robot robot))
+(defmethod move-backward ((robot robot))
+  (when (> (time-died robot) *actual-time*)
+    (setf (time-died robot) -1))
   (when (alivep robot)
     (setf (item-position robot) (pop (positions robot)))))
 
@@ -62,5 +64,7 @@
                                      (random *n-cases*))))
 
 (defmethod collision ((a robot) (b robot))
-  (kill a)
-  (kill b))
+  (when (alivep a)
+    (kill a))
+  (when (alivep b)
+    (kill b)))
