@@ -15,8 +15,10 @@
    (color :initform *bonus-color*)
    (duration :reader duration :initform 10)))
 
-(defmethod draw :after ((bonus bonus))
+(defmethod draw ((bonus bonus))
   (when (alivep bonus)
+    (draw-rectangle-in-case (x bonus) (y bonus) (1- *case-size*)
+                            :color (color bonus))
     (draw-letter-in-case (x bonus) (y bonus) (letter bonus))))
 
 (defmethod collision :after ((player player) (bonus bonus))
