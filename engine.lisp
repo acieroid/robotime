@@ -53,6 +53,7 @@
   (mapcar (lambda (x) (move-robot x (player game))) (robots game))
   (update-player-collisions (player game) (robots game))
   (update-robots-collisions (robots game))
+  (delete-robots game)
   (let ((new-bonus (spawn-bonus-when-needed (player game) (entities game))))
     (when new-bonus
       (push new-bonus (entities game)))))
@@ -84,21 +85,17 @@
     (:south-east :north-west)
     (:south-west :north-east)))
 
-(defmethod correct-position ((player player) robots)
-  (and (in-board (item-position player))
-       (not (find player robots              ; player can't walk on robot's garbage
-                  :test (lambda (p r)
-                          (and (not (alivep r))
-                               (pos= p r)))))))
-
-(defun player-can-move (player dir robots)
+(defun player-can-move (player dir)
   (move player dir)
-  (let ((correct-position (correct-position player robots)))
+  (let ((correct-position (in-board (item-position player))))
     (move player (opposed-direction dir))
     correct-position))
 
 (defmethod delete-entities ((game robotime))
   (setf (entities game) (remove-if #'uselessp (entities game))))
+
+(defmethod delete-robots ((game robotime))
+  (setf (robots game) (remove-if #'uselessp (robots game))))
 
 (defmethod uid:init ((game robotime))
   (setf uid:*font* (make-instance 'uid::ftgl-font
@@ -138,7 +135,7 @@
         (loop for key in keys
            for dir in directions
            collect `(defkey ,key
-                      (when (player-can-move (player game) ,dir (robots game))
+                      (when (player-can-move (player game) ,dir)
                         (move (player game) ,dir)
                         (update game))))))
 

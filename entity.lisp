@@ -57,7 +57,7 @@
                   :time-born *actual-time*))
 
 (defmethod move ((player player) direction)
-  (declare (player ignore forwardp)))
+  (declare (ignore player direction)))
 
 (defmethod add-power ((player player) value)
   (setf (power player)

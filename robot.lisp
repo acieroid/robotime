@@ -60,9 +60,10 @@
 
 ;; TODO: just teleport the player for now
 (defmethod collision ((player player) (robot robot))
-  (when (alivep robot)
+  (if (alivep robot)
     (setf (item-position player) (list (random *n-cases*)
-                                       (random *n-cases*)))))
+                                       (random *n-cases*)))
+    (setf (uselessp robot) t)))
 
 (defmethod collision ((a robot) (b robot))
   (when (alivep a)
