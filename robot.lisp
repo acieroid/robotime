@@ -58,10 +58,11 @@
     (draw-rectangle-in-case (x robot) (y robot) (/ *entity-size* 2)
                             :color uid:*blue*)))
 
-;; TODO: restart the level or finish the game
+;; TODO: just teleport the player for now
 (defmethod collision ((player player) (robot robot))
-  (setf (item-position player) (list (random *n-cases*)
-                                     (random *n-cases*))))
+  (when (alivep robot)
+    (setf (item-position player) (list (random *n-cases*)
+                                       (random *n-cases*)))))
 
 (defmethod collision ((a robot) (b robot))
   (when (alivep a)

@@ -45,7 +45,7 @@
             (draw-letter-in-case x y (letter malus))))))
 
 (defmethod pos= ((player player) (malus malus))
-  (find t  (mapcar (lambda (pos)
+  (find t (mapcar (lambda (pos)
                      (and (= (first pos) (x player))
                           (= (second pos) (y player))))
                    (cases malus))))

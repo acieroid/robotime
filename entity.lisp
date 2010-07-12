@@ -10,14 +10,13 @@
 (defgeneric collision (entity entity)
   (:documentation "Handle a collision between two entities"))
 
-(defgeneric move (entity direction forwardp)
+(defgeneric move (entity direction)
   (:documentation "Move the entity in a direction, this should also
-  handle all the consequences of this movement (crash etc.). FORWARDP
-  is T if the time is moving forward, NIL if moving backward. DIRECTION
+  handle all the consequences of this movement (crash etc.). DIRECTION
   is a keyword indicating a cardinal direction (eg. :NORTH,
   :NORTH-EAST etc.)"))
 
-(defmethod move :after ((entity entity) direction forwardp)
+(defmethod move :after ((entity entity) direction)
   (destructuring-bind (x y)
       (case direction
         (:north '(0 1))
@@ -57,8 +56,8 @@
                   :y (random *n-cases*)
                   :time-born *actual-time*))
 
-(defmethod move ((player player) direction forwardp)
-  (declare (ignore forwardp)))
+(defmethod move ((player player) direction)
+  (declare (player ignore forwardp)))
 
 (defmethod add-power ((player player) value)
   (setf (power player)

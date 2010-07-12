@@ -73,6 +73,30 @@
               rest)
       (update-robots-collisions rest))))
 
+(defun opposed-direction (dir)
+  (case dir
+    (:north :south)
+    (:south :north)
+    (:east :west)
+    (:west :east)
+    (:north-east :south-west)
+    (:north-west :south-east)
+    (:south-east :north-west)
+    (:south-west :north-east)))
+
+(defmethod correct-position ((player player) robots)
+  (and (in-board (item-position player))
+       (not (find player robots              ; player can't walk on robot's garbage
+                  :test (lambda (p r)
+                          (and (not (alivep r))
+                               (pos= p r)))))))
+
+(defun player-can-move (player dir robots)
+  (move player dir)
+  (let ((correct-position (correct-position player robots)))
+    (move player (opposed-direction dir))
+    correct-position))
+
 (defmethod delete-entities ((game robotime))
   (setf (entities game) (remove-if #'uselessp (entities game))))
 
@@ -114,8 +138,9 @@
         (loop for key in keys
            for dir in directions
            collect `(defkey ,key
-                      (move (player game) ,dir t)
-                      (update game)))))
+                      (when (player-can-move (player game) ,dir (robots game))
+                        (move (player game) ,dir)
+                        (update game))))))
 
 (defkey quit
   (uid:close-window game))
