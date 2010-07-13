@@ -17,19 +17,19 @@
   :NORTH-EAST etc.)"))
 
 (defmethod move :after ((entity entity) direction)
-  (destructuring-bind (x y)
-      (case direction
-        (:north '(0 1))
-        (:south '(0 -1))
-        (:east '(1 0))
-        (:west '(-1 0))
-        (:north-east '(1 1))
-        (:north-west '(-1 1))
-        (:south-east '(1 -1))
-        (:south-west '(-1 -1))
-        (otherwise (error "Not a valid direction: ~a" direction)))
-    (setf (x entity) (+ (x entity) x))
-    (setf (y entity) (+ (y entity) y))))
+  (let ((dir
+         (case direction
+           (:north '(0 2))
+           (:south '(0 -2))
+           (:east '(1 0))
+           (:west '(-1 0))
+           (:north-east (if (evenp (y entity)) '(0 1) '(1 1)))
+           (:north-west (if (evenp (y entity)) '(-1 1) '(0 1)))
+           (:south-east (if (evenp (y entity)) '(0 -1) '(1 -1)))
+           (:south-west (if (evenp (y entity)) '(-1 -1) '(0 -1)))
+           (otherwise (error "Not a valid direction: ~a" direction)))))
+    (setf (item-position entity) (case+ (item-position entity)
+                                        dir))))
 
 (defmethod alivep ((entity entity))
   (and (<= (time-born entity) *actual-time*)
@@ -45,6 +45,8 @@
     (draw-rectangle-in-case (x entity) (y entity) *entity-size*
                             :color (color entity))))
 ;;; Player
+(defvar *player-tile* (load-image "player.png"))
+
 (defclass player (entity)
   ((power :accessor power :initform 50)
    (max-power :accessor max-power :initform 100)
@@ -55,6 +57,9 @@
                   :x (random *n-cases*)
                   :y (random *n-cases*)
                   :time-born *actual-time*))
+
+(defmethod draw ((player player))
+  (draw-at (x player) (y player) *player-tile*))
 
 (defmethod move ((player player) direction)
   (declare (ignore player direction)))

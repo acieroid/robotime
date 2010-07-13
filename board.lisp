@@ -1,9 +1,9 @@
 (in-package robotime)
 
-(defvar *grass-tile* (make-instance 'uid:image
-                                    :texture-filepath #p"/home/quentin/grass.png"))
+(defvar *grass-tile* (load-image "grass.png"))
+
 (defclass board (graphic-item)
-  ())
+  )
 
 (defmethod draw ((board board))
   (loop for y from *n-cases-y* downto 0

@@ -1,4 +1,6 @@
 (in-package robotime)
+(defvar *robot-tile* (load-image "robot.png"))
+(defvar *dead-robot-tile* (load-image "dead-robot.png"))
 
 (defclass robot (entity)
   ((color :initform *robot-color*)
@@ -51,12 +53,10 @@
   (when (alivep robot)
     (setf (item-position robot) (pop (positions robot)))))
 
-(defmethod draw :after ((robot robot))
-  (when (not (alivep robot))
-    (draw-rectangle-in-case (x robot) (y robot) *entity-size*
-                            :color (color robot))
-    (draw-rectangle-in-case (x robot) (y robot) (/ *entity-size* 2)
-                            :color uid:*blue*)))
+(defmethod draw ((robot robot))
+  (draw-at (x robot) (y robot) (if (alivep robot)
+                                   *robot-tile*
+                                   *dead-robot-tile*)))
 
 ;; TODO: just teleport the player for now
 (defmethod collision ((player player) (robot robot))

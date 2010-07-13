@@ -70,9 +70,20 @@
 (defparameter *tile-height* (/ *tile-width* 4))
 (defparameter *n-cases-x* 16)
 (defparameter *n-cases-y* 32)
+(defparameter *ressources-dir* #p"/home/quentin/robotime/ressources/")
 
+(defun load-image (name)
+  (make-instance 'uid:image
+                 :texture-filepath (merge-pathnames *ressources-dir*
+                                                    name)))
 (defun draw-at (x y drawable)
   (uid:draw drawable
             :x (+ (* x *tile-width*)
                   (if (oddp y) (/ *tile-width* 2) 0))
             :y (* y *tile-height*)))
+
+(defun position-for-case (x y)
+  "Return the center of the tile situed at (X,Y)"
+  (list (+ (* x *tile-width*)
+           (if (oddp y) *tile-width* (/ *tile-width* 2)))
+        (+ (* y *tile-height*) (/ *tile-height* 2))))
