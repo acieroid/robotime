@@ -18,9 +18,7 @@
 
 (defmethod draw ((bonus bonus))
   (when (alivep bonus)
-    (draw-rectangle-in-case (x bonus) (y bonus) (1- *case-size*)
-                            :color (color bonus))
-    (draw-letter-in-case (x bonus) (y bonus) (letter bonus))))
+    (draw-at (x bonus) (y bonus) *bonus-tile*)))
 
 (defmethod collision :after ((player player) (bonus bonus))
   (setf (uselessp bonus) t))
@@ -32,9 +30,6 @@
 (defmethod collision ((player player) (bonus power-bonus))
   (when (alivep bonus)
     (add-power player (value bonus))))
-
-(defmethod draw ((bonus bonus))
-  (draw-at (x bonus) (y bonus) *bonus-tile*))
 
 ;;; Malus
 (defclass malus (bonus)

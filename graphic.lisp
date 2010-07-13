@@ -81,9 +81,3 @@
             :x (+ (* x *tile-width*)
                   (if (oddp y) (/ *tile-width* 2) 0))
             :y (* y *tile-height*)))
-
-(defun position-for-case (x y)
-  "Return the center of the tile situed at (X,Y)"
-  (list (+ (* x *tile-width*)
-           (if (oddp y) *tile-width* (/ *tile-width* 2)))
-        (+ (* y *tile-height*) (/ *tile-height* 2))))
