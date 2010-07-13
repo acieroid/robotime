@@ -7,7 +7,7 @@
 (defparameter *tile-width* 32)
 (defparameter *tile-height* (/ *tile-width* 4))
 (defparameter *n-cases-x* 20)
-(defparameter *n-cases-y* 80)
+(defparameter *n-cases-y* 40)
 (defparameter *ressources-dir* #p"/home/quentin/robotime/ressources/")
 
 (defun draw-power (x y value max-value)
@@ -52,9 +52,12 @@
                                                     name)))
 (defun draw-at (x y drawable)
   (uid:draw drawable
-            :x (+ (* x *tile-width*)
+            :x (+ (* (+ x 0) *tile-width*)
                   (if (oddp y) (/ *tile-width* 2) 0))
-            :y (* y *tile-height*)))
+            :y (* (+ y 2) *tile-height*)))
+
+(defun draw-tile (x y drawable)
+  (draw-at (- x 1) (- y 3) drawable))
 
 (defclass graphic-item ()
   ((x :accessor x :initarg :x :initform 0)

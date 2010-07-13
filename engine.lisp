@@ -92,12 +92,10 @@
     (:south-west :north-east)))
 
 (defun player-can-move (player dir)
-  t
-;  (move player dir)
-;  (let ((correct-position (in-board (item-position player))))
-;    (move player (opposed-direction dir))
-;    correct-position))
-  )
+  (move player dir)
+  (let ((correct-position (in-board (item-position player))))
+    (move player (opposed-direction dir))
+    correct-position))
 
 (defmethod levelup ((game robotime))
   (incf *level*)
