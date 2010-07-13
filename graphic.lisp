@@ -63,3 +63,16 @@
   "return T if the case C is in the board"
   (and (>= (first c) 0) (>= (second c) 0)
        (< (first c) *n-cases*) (< (second c) *n-cases*)))
+
+
+;; Isometric tiles
+(defparameter *tile-width* 32)
+(defparameter *tile-height* (/ *tile-width* 4))
+(defparameter *n-cases-x* 16)
+(defparameter *n-cases-y* 32)
+
+(defun draw-at (x y drawable)
+  (uid:draw drawable
+            :x (+ (* x *tile-width*)
+                  (if (oddp y) (/ *tile-width* 2) 0))
+            :y (* y *tile-height*)))
