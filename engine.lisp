@@ -118,12 +118,7 @@
     (setf (robots game)
           (spawn-robots *difficulty-by-level* (item-position (player game))))))
 
-(defmethod uid:on-draw ((game robotime))
-  (uid:clear game)
-  (draw (board game))
-  (draw (player game))
-  (mapcar #'draw (entities game))
-  (mapcar #'draw (robots game))
+(defmethod draw-ui ((game robotime))
   (draw-power (- (uid:width game) (* 2 *power-width*)) 10
               (power (player game)) (max-power (player game)))
   (uid:draw (format nil "time: ~a" *actual-time*)
@@ -133,6 +128,14 @@
             :x 10 :y (- (uid:width game) 60))
   (uid:draw (format nil "level: ~a" *level*)
             :x 10 :y (- (uid:width game) 70)))
+
+(defmethod uid:on-draw ((game robotime))
+  (uid:clear game)
+  (draw (board game))
+  (draw (player game))
+  (mapcar #'draw (entities game))
+  (mapcar #'draw (robots game))
+  (draw-ui game))
 
 (defmacro defkey (action &body body)
   (let* ((keys (cdr (assoc action *keys*)))
