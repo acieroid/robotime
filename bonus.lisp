@@ -3,14 +3,12 @@
 (defparameter *bonus-frequency* 15)
 (defparameter *frequencies*
   '(power-bonus power-bonus power-bonus
-    ;power-malus
     ))
 (defparameter *frequencies-length* (length *frequencies*))
 (defvar *bonus-tile* (load-image "bonus.png"))
 
 (defvar *last-spawn* 0)
 
-;;; Bonus
 (defclass bonus (entity)
   ((letter :reader letter)
    (duration :reader duration :initform 10)))
@@ -30,68 +28,6 @@
   (when (alivep bonus)
     (add-power player (value bonus))))
 
-;;; Malus
-(defclass malus (bonus)
-  ((cases :reader cases :initarg :cases)))
-
-#|(defmethod draw ((malus malus))
-  (when (alivep malus)
-    (loop for (x y) in (cases malus)
-       do (progn
-            (draw-rectangle-in-case x y *case-size* :color (color malus))
-            (draw-letter-in-case x y (letter malus))))))|#
-
-(defmethod pos= ((player player) (malus malus))
-  (find t (mapcar (lambda (pos)
-                     (and (= (first pos) (x player))
-                          (= (second pos) (y player))))
-                   (cases malus))))
-
-(defun cases-accross (c)
-  "Return the cases accross "
-  (loop for dir in '((0 1) (1 0) (1 1) (0 -1) (-1 0) (-1 1) (1 -1) (-1 -1))
-       for case = (list  (+ (first c) (first dir))
-                         (+ (second c) (second dir)))
-       when (in-board case)
-       collect case))
-
-(defun take (n l)
-  (when (and l (plusp n))
-    (cons (first l) (take (1- n) (rest l)))))
-
-(defun malus-cases (n case)
-  "Return n cases that can be used for a malus, around (CENTER-X, CENTER-Y)"
-  (labels ((next-cases (c cases)
-             (remove-if (lambda (x)
-                          (find x cases :test #'case=))
-                        (cases-accross c)))
-           (rec (n cases)
-             (let ((count 0)
-                   (new-cases cases))
-               (loop for c in cases
-                  while (< count n)
-                  do (let* ((cs (next-cases c new-cases))
-                            (length (length cs)))
-                       (if (> length (- n count))
-                           (progn
-                             (nconc new-cases (take (- n count) cs))
-                             (setf count n))
-                           (progn
-                             (nconc new-cases cs)
-                             (incf count length)))))
-               (if (< count n)
-                   (rec (- n count) new-cases)
-                   new-cases))))
-    (rec (1- n) (list case))))
-
-(defclass power-malus (malus)
-  ((letter :initform #\p)
-   (value :accessor value :initform 5)))
-
-(defmethod collision ((player player) (malus power-malus))
-  (when (alivep malus)
-    (add-power player (- (value malus)))))
-
 ;; Spawn related stuff
 ;; TODO: there are a lot of improvements to do here
 (defun random-bonus (case)
@@ -106,23 +42,13 @@
           *actual-time*)))               ; TODO: add some randomness here too
 
 (defun find-free-case (player entities)
-  (let ((cases (reduce (lambda (last x)
-                         (append last (cases-occupied x)))
-                       (cons nil
-                             (cons player entities)))))
+  (let ((cases (cons (item-position player) (mapcar #'item-position entities))))
     (loop for case = (random-case)
        when (not (find case cases :test #'case=))
        return case)))
 
-;; TODO: spawn malus too
 (defun spawn-bonus-when-needed (player entities)
   (when (spawn-needed)
     (let ((bonus (random-bonus (find-free-case player entities))))
       (setf *last-spawn* *actual-time*)
       bonus)))
-
-(defmethod cases-occupied ((item graphic-item))
-  (list (list (x item) (y item))))
-
-(defmethod cases-occupied ((malus malus))
-  (cases malus))
