@@ -31,18 +31,23 @@
                       ,@(rest clause)))
                   clauses)))))
 
-;; TODO: diagonal moves
+;; TODO: refactorize that
 (defmethod move-robot ((robot robot) (player player))
   (when (alivep robot)
     (let ((direction
            (compare (x robot) (x player)
-                    ((< :east)
-                     (> :west)
-                     (=
-                      (compare (y robot) (y player)
-                               ((< :north)
-                                (> :south)
-                                (= :stay))))))))
+                    ((< (compare (y robot) (y player)
+                                 ((< :north-east)
+                                  (> :south-east)
+                                  (= :east))))
+                     (> (compare (y robot) (y player)
+                                 ((< :north-west)
+                                  (> :south-west)
+                                  (= :west))))
+                     (= (compare (y robot) (y player)
+                                 ((< :north)
+                                  (> :south)
+                                  (= :stay))))))))
       (push (item-position robot) (positions robot))
       (move robot direction))))
 
