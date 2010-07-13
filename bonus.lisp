@@ -112,8 +112,7 @@
                          (append last (cases-occupied x)))
                        (cons nil
                              (cons player entities)))))
-    (loop for case = (list (random *n-cases*)
-                           (random *n-cases*))
+    (loop for case = (random-case)
        when (not (find case cases :test #'case=))
        return case)))
 

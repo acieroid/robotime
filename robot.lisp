@@ -13,8 +13,7 @@
 
 (defun spawn-robots (n player-case &optional (cases nil))
   (if (plusp n)
-      (let ((case (list (random *n-cases*)
-                        (random *n-cases*))))
+      (let ((case (random-case)))
         (if (or (case= player-case case)
                 (find case cases :test #'case=))
             (spawn-robots n player-case cases)
@@ -32,6 +31,7 @@
                       ,@(rest clause)))
                   clauses)))))
 
+;; TODO
 (defmethod move-robot ((robot robot) (player player))
   (when (alivep robot)
     (let ((direction
@@ -58,11 +58,9 @@
                                    *robot-tile*
                                    *dead-robot-tile*)))
 
-;; TODO: just teleport the player for now
 (defmethod collision ((player player) (robot robot))
   (if (alivep robot)
-    (setf (item-position player) (list (random *n-cases*)
-                                       (random *n-cases*)))
+    (setf (item-position player) (random-case))
     (setf (uselessp robot) t)))
 
 (defmethod collision ((a robot) (b robot))
