@@ -4,7 +4,6 @@
   ((time-born :reader time-born :initarg :time-born)
    (time-died :accessor time-died :initform -1 :initarg :time-died)
    (positions :accessor positions :initform '())
-   (color :reader color :initarg :color)
    (useless :accessor uselessp :initform nil)))
 
 (defgeneric collision (entity entity)
@@ -17,19 +16,20 @@
   :NORTH-EAST etc.)"))
 
 (defmethod move :after ((entity entity) direction)
-  (destructuring-bind (x y)
-      (case direction
-        (:north '(0 1))
-        (:south '(0 -1))
-        (:east '(1 0))
-        (:west '(-1 0))
-        (:north-east '(1 1))
-        (:north-west '(-1 1))
-        (:south-east '(1 -1))
-        (:south-west '(-1 -1))
-        (otherwise (error "Not a valid direction: ~a" direction)))
-    (setf (x entity) (+ (x entity) x))
-    (setf (y entity) (+ (y entity) y))))
+  (when direction
+    (let ((dir
+           (case direction
+             (:north '(0 2))
+             (:south '(0 -2))
+             (:east '(1 0))
+             (:west '(-1 0))
+             (:north-east (if (evenp (y entity)) '(0 1) '(1 1)))
+             (:north-west (if (evenp (y entity)) '(-1 1) '(0 1)))
+             (:south-east (if (evenp (y entity)) '(0 -1) '(1 -1)))
+             (:south-west (if (evenp (y entity)) '(-1 -1) '(0 -1)))
+             (otherwise (error "Not a valid direction: ~a" direction)))))
+      (setf (item-position entity) (case+ (item-position entity)
+                                          dir)))))
 
 (defmethod alivep ((entity entity))
   (and (<= (time-born entity) *actual-time*)
@@ -40,21 +40,26 @@
   (setf (time-died entity) *actual-time*))
 
 ;; This only draw when the entity is alive
-(defmethod draw ((entity entity))
+#|(defmethod draw ((entity entity))
   (when (alivep entity)
     (draw-rectangle-in-case (x entity) (y entity) *entity-size*
-                            :color (color entity))))
+                            :color (color entity))))|#
 ;;; Player
+(defvar *player-tile* (load-image "player.png"))
+
 (defclass player (entity)
   ((power :accessor power :initform 50)
-   (max-power :accessor max-power :initform 100)
-   (color :initform *player-color*)))
+   (max-power :accessor max-power :initform 100)))
 
 (defun make-player ()
-  (make-instance 'player
-                  :x (random *n-cases*)
-                  :y (random *n-cases*)
-                  :time-born *actual-time*))
+  (destructuring-bind (x y) (random-case)
+    (make-instance 'player
+                   :x x
+                   :y y
+                   :time-born *actual-time*)))
+
+(defmethod draw ((player player))
+  (draw-at (x player) (y player) *player-tile*))
 
 (defmethod move ((player player) direction)
   (declare (ignore player direction)))

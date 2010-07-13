@@ -6,20 +6,18 @@
     ;power-malus
     ))
 (defparameter *frequencies-length* (length *frequencies*))
+(defvar *bonus-tile* (load-image "bonus.png"))
 
 (defvar *last-spawn* 0)
 
 ;;; Bonus
 (defclass bonus (entity)
   ((letter :reader letter)
-   (color :initform *bonus-color*)
    (duration :reader duration :initform 10)))
 
 (defmethod draw ((bonus bonus))
   (when (alivep bonus)
-    (draw-rectangle-in-case (x bonus) (y bonus) (1- *case-size*)
-                            :color (color bonus))
-    (draw-letter-in-case (x bonus) (y bonus) (letter bonus))))
+    (draw-at (x bonus) (y bonus) *bonus-tile*)))
 
 (defmethod collision :after ((player player) (bonus bonus))
   (setf (uselessp bonus) t))
@@ -34,15 +32,14 @@
 
 ;;; Malus
 (defclass malus (bonus)
-  ((color :initform *malus-color*)
-   (cases :reader cases :initarg :cases)))
+  ((cases :reader cases :initarg :cases)))
 
-(defmethod draw ((malus malus))
+#|(defmethod draw ((malus malus))
   (when (alivep malus)
     (loop for (x y) in (cases malus)
        do (progn
             (draw-rectangle-in-case x y *case-size* :color (color malus))
-            (draw-letter-in-case x y (letter malus))))))
+            (draw-letter-in-case x y (letter malus))))))|#
 
 (defmethod pos= ((player player) (malus malus))
   (find t (mapcar (lambda (pos)
@@ -113,8 +110,7 @@
                          (append last (cases-occupied x)))
                        (cons nil
                              (cons player entities)))))
-    (loop for case = (list (random *n-cases*)
-                           (random *n-cases*))
+    (loop for case = (random-case)
        when (not (find case cases :test #'case=))
        return case)))
 

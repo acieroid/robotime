@@ -1,8 +1,9 @@
 (in-package robotime)
+(defvar *robot-tile* (load-image "robot.png"))
+(defvar *dead-robot-tile* (load-image "dead-robot.png"))
 
 (defclass robot (entity)
-  ((color :initform *robot-color*)
-   (positions :initform nil)))
+  ((positions :initform nil)))
 
 (defun make-robot (case)
   (destructuring-bind (x y) case
@@ -11,8 +12,7 @@
 
 (defun spawn-robots (n player-case &optional (cases nil))
   (if (plusp n)
-      (let ((case (list (random *n-cases*)
-                        (random *n-cases*))))
+      (let ((case (random-case)))
         (if (or (case= player-case case)
                 (find case cases :test #'case=))
             (spawn-robots n player-case cases)
@@ -33,17 +33,16 @@
 (defmethod move-robot ((robot robot) (player player))
   (when (alivep robot)
     (let ((direction
-           (list 
-            (compare (x robot) (x player) 
-                     ((< 1)
-                      (> -1)
-                      (= 0)))
+           (find-direction
+            (compare (x robot) (x player)
+                     ((< :east) (> :west) (= nil)))
             (compare (y robot) (y player)
-                     ((< 1)
-                      (> -1)
-                      (= 0))))))
+                     ((< :north) (> :south) (= nil))))))
       (push (item-position robot) (positions robot))
-      (setf (item-position robot) (case+ (item-position robot) direction)))))
+      (move robot direction))))
+
+(defmethod move ((robot robot) direction)
+  (declare (ignore robot direction)))
 
 (defmethod move-backward ((robot robot))
   (when (> (time-died robot) *actual-time*)
@@ -51,18 +50,14 @@
   (when (alivep robot)
     (setf (item-position robot) (pop (positions robot)))))
 
-(defmethod draw :after ((robot robot))
-  (when (not (alivep robot))
-    (draw-rectangle-in-case (x robot) (y robot) *entity-size*
-                            :color (color robot))
-    (draw-rectangle-in-case (x robot) (y robot) (/ *entity-size* 2)
-                            :color uid:*blue*)))
+(defmethod draw ((robot robot))
+  (draw-at (x robot) (y robot) (if (alivep robot)
+                                   *robot-tile*
+                                   *dead-robot-tile*)))
 
-;; TODO: just teleport the player for now
 (defmethod collision ((player player) (robot robot))
   (if (alivep robot)
-    (setf (item-position player) (list (random *n-cases*)
-                                       (random *n-cases*)))
+    (setf (item-position player) (random-case))
     (setf (uselessp robot) t)))
 
 (defmethod collision ((a robot) (b robot))

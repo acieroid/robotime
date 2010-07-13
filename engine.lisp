@@ -1,5 +1,8 @@
 (in-package robotime)
 
+(defparameter *difficulty-by-level* 5)
+(defvar *level* 1)
+
 (eval-when (:compile-toplevel)
   (defvar *keys*                        ; TODO: add qwerty bindings
     '((quit . :escape)
@@ -43,6 +46,7 @@
   (setf *actual-time* 0
         *last-spawn* 0)
   (setf *engine* (make-instance 'robotime))
+  (setf *level* 1)
   (run))
 
 (defmethod update ((game robotime))
@@ -56,7 +60,9 @@
   (delete-robots game)
   (let ((new-bonus (spawn-bonus-when-needed (player game) (entities game))))
     (when new-bonus
-      (push new-bonus (entities game)))))
+      (push new-bonus (entities game))))
+  (when (null (robots game))
+    (levelup game)))
 
 (defun update-player-collisions (player entities)
   (mapcar (lambda (x)
@@ -86,10 +92,19 @@
     (:south-west :north-east)))
 
 (defun player-can-move (player dir)
-  (move player dir)
-  (let ((correct-position (in-board (item-position player))))
-    (move player (opposed-direction dir))
-    correct-position))
+  t
+;  (move player dir)
+;  (let ((correct-position (in-board (item-position player))))
+;    (move player (opposed-direction dir))
+;    correct-position))
+  )
+
+(defmethod levelup ((game robotime))
+  (incf *level*)
+  (setf *actual-time* 0)
+  (setf (entities game) nil)
+  (setf (robots game) (spawn-robots (* *difficulty-by-level* *level*)
+                                    (item-position (player game)))))
 
 (defmethod delete-entities ((game robotime))
   (setf (entities game) (remove-if #'uselessp (entities game))))
@@ -103,10 +118,11 @@
                                   :size *font-size*))
   (when (null (robots game))
     (setf (robots game)
-          (spawn-robots 10 (item-position (player game))))))
+          (spawn-robots *difficulty-by-level* (item-position (player game))))))
 
 (defmethod uid:on-draw ((game robotime))
   (uid:clear game)
+  (draw (board game))
   (draw (player game))
   (mapcar #'draw (entities game))
   (mapcar #'draw (robots game))
@@ -114,7 +130,11 @@
               (power (player game)) (max-power (player game)))
   (uid:draw (format nil "time: ~a" *actual-time*)
             :x 10 :y (- (uid:width game) 50))
-  (draw (board game)))
+  (uid:draw (format nil "robots: ~a" (loop for robot in (robots game)
+                                          count (alivep robot)))
+            :x 10 :y (- (uid:width game) 60))
+  (uid:draw (format nil "level: ~a" *level*)
+            :x 10 :y (- (uid:width game) 70)))
 
 (defmacro defkey (action &body body)
   (let* ((keys (cdr (assoc action *keys*)))
