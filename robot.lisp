@@ -31,21 +31,23 @@
                       ,@(rest clause)))
                   clauses)))))
 
-;; TODO
+;; TODO: diagonal moves
 (defmethod move-robot ((robot robot) (player player))
   (when (alivep robot)
     (let ((direction
-           (list 
-            (compare (x robot) (x player) 
-                     ((< 1)
-                      (> -1)
-                      (= 0)))
-            (compare (y robot) (y player)
-                     ((< 1)
-                      (> -1)
-                      (= 0))))))
+           (compare (x robot) (x player)
+                    ((< :east)
+                     (> :west)
+                     (=
+                      (compare (y robot) (y player)
+                               ((< :north)
+                                (> :south)
+                                (= :stay))))))))
       (push (item-position robot) (positions robot))
-      (setf (item-position robot) (case+ (item-position robot) direction)))))
+      (move robot direction))))
+
+(defmethod move ((robot robot) direction)
+  (declare (ignore robot direction)))
 
 (defmethod move-backward ((robot robot))
   (when (> (time-died robot) *actual-time*)

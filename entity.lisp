@@ -27,6 +27,7 @@
            (:north-west (if (evenp (y entity)) '(-1 1) '(0 1)))
            (:south-east (if (evenp (y entity)) '(0 -1) '(1 -1)))
            (:south-west (if (evenp (y entity)) '(-1 -1) '(0 -1)))
+           (:stay '(0 0))
            (otherwise (error "Not a valid direction: ~a" direction)))))
     (setf (item-position entity) (case+ (item-position entity)
                                         dir))))
