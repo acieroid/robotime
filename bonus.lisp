@@ -6,6 +6,7 @@
     ;power-malus
     ))
 (defparameter *frequencies-length* (length *frequencies*))
+(defvar *bonus-tile* (load-image "bonus.png"))
 
 (defvar *last-spawn* 0)
 
@@ -31,6 +32,9 @@
 (defmethod collision ((player player) (bonus power-bonus))
   (when (alivep bonus)
     (add-power player (value bonus))))
+
+(defmethod draw ((bonus bonus))
+  (draw-at (x bonus) (y bonus) *bonus-tile*))
 
 ;;; Malus
 (defclass malus (bonus)

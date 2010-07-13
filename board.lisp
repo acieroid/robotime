@@ -3,7 +3,7 @@
 (defvar *grass-tile* (load-image "grass.png"))
 
 (defclass board (graphic-item)
-  )
+ ())
 
 (defmethod draw ((board board))
   (loop for y from *n-cases-y* downto 0

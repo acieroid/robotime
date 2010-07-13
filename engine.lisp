@@ -124,7 +124,7 @@
   (uid:clear game)
   (draw (board game))
   (draw (player game))
-;  (mapcar #'draw (entities game))
+  (mapcar #'draw (entities game))
   (mapcar #'draw (robots game))
   (draw-power (- (uid:width game) (* 2 *power-width*)) 10
               (power (player game)) (max-power (player game)))
@@ -155,10 +155,9 @@
         (loop for key in keys
            for dir in directions
            collect `(defkey ,key
-                      (move (player game) ,dir)
-                      #|(when (player-can-move (player game) ,dir)
+                      (when (player-can-move (player game) ,dir)
                         (move (player game) ,dir)
-                        (update game))|#))))
+                        (update game))))))
 
 (defkey quit
   (uid:close-window game))
