@@ -16,6 +16,19 @@
                       :color *power-color*)
   (uid:draw-rectangle x y *power-width* *power-height* :filledp nil))
 
+(defun directions (dir)
+  (case dir
+    (:north '(:north :north-east :north-west))
+    (:south '(:south :south-east :south-west))
+    (:east '(:east :south-east :north-east))
+    (:west '(:wost :north-west :south-west))
+    (otherwise nil)))
+
+(defun find-direction (dir1 dir2)
+  (if (or (null dir1) (null dir2))
+    (or dir1 dir2)
+    (car (intersection (directions dir1) (directions dir2)))))
+
 (defun case= (a b)
   (and (= (first a) (first b))
        (= (second a) (second b))))
@@ -28,19 +41,14 @@
   (list (random *n-cases-x*)
         (random *n-cases-y*)))
 
-(defmethod pos= ((a graphic-item) (b graphic-item))
-  (and (= (x a) (x b))
-       (= (y a) (y b))))
-
-;; TODO
 (defun in-board (c)
   "return T if the case C is in the board"
   (and (>= (first c) 0) (>= (second c) 0)
-       (< (first c) *n-cases*) (< (second c) *n-cases*)))
+       (< (first c) *n-cases-x*) (< (second c) *n-cases-y*)))
 
 (defun load-image (name)
   (make-instance 'uid:image
-                 :texture-filepath (merge-pathnames *ressources-dir*
+                :texture-filepath (merge-pathnames *ressources-dir*
                                                     name)))
 (defun draw-at (x y drawable)
   (uid:draw drawable
@@ -62,3 +70,6 @@
   (setf (x item) (first pos))
   (setf (y item) (second pos))
   (list (first pos) (second pos)))
+
+(defmethod pos= ((a graphic-item) (b graphic-item))
+  (case= (item-position a) (item-position b)))

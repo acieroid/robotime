@@ -3,8 +3,7 @@
 (defvar *dead-robot-tile* (load-image "dead-robot.png"))
 
 (defclass robot (entity)
-  ((color :initform *robot-color*)
-   (positions :initform nil)))
+  ((positions :initform nil)))
 
 (defun make-robot (case)
   (destructuring-bind (x y) case
@@ -31,23 +30,14 @@
                       ,@(rest clause)))
                   clauses)))))
 
-;; TODO: refactorize that
 (defmethod move-robot ((robot robot) (player player))
   (when (alivep robot)
     (let ((direction
-           (compare (x robot) (x player)
-                    ((< (compare (y robot) (y player)
-                                 ((< :north-east)
-                                  (> :south-east)
-                                  (= :east))))
-                     (> (compare (y robot) (y player)
-                                 ((< :north-west)
-                                  (> :south-west)
-                                  (= :west))))
-                     (= (compare (y robot) (y player)
-                                 ((< :north)
-                                  (> :south)
-                                  (= :stay))))))))
+           (find-direction
+            (compare (x robot) (x player)
+                     ((< :east) (> :west) (= nil)))
+            (compare (y robot) (y player)
+                     ((< :north) (> :south) (= nil))))))
       (push (item-position robot) (positions robot))
       (move robot direction))))
 

@@ -13,7 +13,6 @@
 ;;; Bonus
 (defclass bonus (entity)
   ((letter :reader letter)
-   (color :initform *bonus-color*)
    (duration :reader duration :initform 10)))
 
 (defmethod draw ((bonus bonus))
@@ -33,15 +32,14 @@
 
 ;;; Malus
 (defclass malus (bonus)
-  ((color :initform *malus-color*)
-   (cases :reader cases :initarg :cases)))
+  ((cases :reader cases :initarg :cases)))
 
-(defmethod draw ((malus malus))
+#|(defmethod draw ((malus malus))
   (when (alivep malus)
     (loop for (x y) in (cases malus)
        do (progn
             (draw-rectangle-in-case x y *case-size* :color (color malus))
-            (draw-letter-in-case x y (letter malus))))))
+            (draw-letter-in-case x y (letter malus))))))|#
 
 (defmethod pos= ((player player) (malus malus))
   (find t (mapcar (lambda (pos)
