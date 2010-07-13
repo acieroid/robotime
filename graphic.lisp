@@ -9,6 +9,8 @@
 (defparameter *n-cases-x* 20)
 (defparameter *n-cases-y* 40)
 (defparameter *ressources-dir* #p"/home/quentin/robotime/ressources/")
+;; This gets defined here cause we use it everywhere
+(defvar *actual-time* 0 "The actual time of the game")
 
 (defun draw-power (x y value max-value)
   (uid:draw-rectangle x y *power-width*

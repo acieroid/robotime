@@ -39,24 +39,17 @@
 (defmethod kill ((entity entity))
   (setf (time-died entity) *actual-time*))
 
-;; This only draw when the entity is alive
-#|(defmethod draw ((entity entity))
-  (when (alivep entity)
-    (draw-rectangle-in-case (x entity) (y entity) *entity-size*
-                            :color (color entity))))|#
 ;;; Player
 (defvar *player-tile* (load-image "player.png"))
 
 (defclass player (entity)
   ((power :accessor power :initform 50)
-   (max-power :accessor max-power :initform 100)))
+   (max-power :accessor max-power :initform 100)
+   (blasts :accessor blasts :initform 0)))
 
 (defun make-player ()
   (destructuring-bind (x y) (random-case)
-    (make-instance 'player
-                   :x x
-                   :y y
-                   :time-born *actual-time*)))
+    (make-instance 'player :x x :y y :time-born *actual-time*)))
 
 (defmethod draw ((player player))
   (draw-at (x player) (y player) *player-tile*))
@@ -69,3 +62,5 @@
         (min (max-power player)
              (max 0 (+ (power player) value)))))
 
+(defmethod add-blast ((player player))
+  (incf (blasts player)))

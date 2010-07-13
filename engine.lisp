@@ -1,10 +1,11 @@
 (in-package robotime)
 
+(defparameter *blast-ray* 2)
 (defparameter *difficulty-by-level* 5)
 (defvar *level* 1)
 
 (eval-when (:compile-toplevel)
-  (defvar *keys*                        ; TODO: add qwerty bindings
+  (defparameter *keys*                        ; TODO: add qwerty bindings
     '((quit . :escape)
       (left . (:left :a))
       (right . (:right :i))
@@ -15,10 +16,9 @@
       (downleft . :agrave)
       (downright . :x)
       (forward . (:espace :u))
-      (backward . :o))
+      (backward . :o)
+      (blast . :space))
     "The actions with the associated keybindings"))
-
-(defvar *actual-time* 0 "The actual time of the game")
 
 (defclass robotime (uid:simple-game-engine)
   ((board :reader board :initform (make-instance 'board))
@@ -99,7 +99,8 @@
 
 (defmethod levelup ((game robotime))
   (incf *level*)
-  (setf *actual-time* 0)
+  (setf *actual-time* 0
+        *last-spawn* 0)
   (setf (entities game) nil)
   (setf (robots game) (spawn-robots (* *difficulty-by-level* *level*)
                                     (item-position (player game)))))
@@ -110,6 +111,35 @@
 (defmethod delete-robots ((game robotime))
   (setf (robots game) (remove-if #'uselessp (robots game))))
 
+(defun blast (center robots)
+  (destructuring-bind (x y) center
+    (mapcar
+     (lambda (r)
+       (when (and (>= (x r) x) (>= (y r) y)
+                  (<= (x r) (+ x *blast-ray*))
+                  (<= (y r) (+ y *blast-ray*)))
+         (kill r)))
+     robots)))
+
+(defmacro draw-informations (x y step &rest infos)
+  (cons 'progn
+        (loop for info in infos
+           for offset from step by step
+           collect
+           (destructuring-bind (control-string &rest args) info
+             `(uid:draw (format nil ,control-string ,@args)
+                        :x ,x :y (- ,y ,offset))))))
+
+(defmethod draw-ui ((game robotime))
+  (draw-power (- (uid:width game) (* 2 *power-width*)) 10
+              (power (player game)) (max-power (player game)))
+  (draw-informations 10 (- (uid:width game) 50) 10
+    ("time: ~a" *actual-time*)
+    ("robots: ~a" (loop for robot in (robots game) count (alivep robot)))
+    ("level: ~a" *level*)
+    ("blasts: ~a" (blasts (player game)))))
+
+;;; UID functions
 (defmethod uid:init ((game robotime))
   (setf uid:*font* (make-instance 'uid::ftgl-font
                                   :filepath #P"font.ttf"
@@ -117,17 +147,6 @@
   (when (null (robots game))
     (setf (robots game)
           (spawn-robots *difficulty-by-level* (item-position (player game))))))
-
-(defmethod draw-ui ((game robotime))
-  (draw-power (- (uid:width game) (* 2 *power-width*)) 10
-              (power (player game)) (max-power (player game)))
-  (uid:draw (format nil "time: ~a" *actual-time*)
-            :x 10 :y (- (uid:width game) 50))
-  (uid:draw (format nil "robots: ~a" (loop for robot in (robots game)
-                                          count (alivep robot)))
-            :x 10 :y (- (uid:width game) 60))
-  (uid:draw (format nil "level: ~a" *level*)
-            :x 10 :y (- (uid:width game) 70)))
 
 (defmethod uid:on-draw ((game robotime))
   (uid:clear game)
@@ -137,6 +156,7 @@
   (mapcar #'draw (robots game))
   (draw-ui game))
 
+;; Keybindings
 (defmacro defkey (action &body body)
   (let* ((keys (cdr (assoc action *keys*)))
          (keysyms
@@ -179,3 +199,8 @@
     (update-player-collisions (player game) (robots game))
     (mapcar #'move-backward (robots game))
     (add-power (player game) -3)))
+
+(defkey blast
+  (when (plusp (blasts (player game)))
+    (decf (blasts (player game)))
+    (blast (item-position (player game)) (robots game))))
