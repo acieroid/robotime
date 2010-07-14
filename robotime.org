@@ -1,77 +1,137 @@
-* Robotime
-Basiquement, un [[http://en.wikipedia.org/wiki/Robots_(computer_game)][robots]]-like, mais avec des différences.
-** Contrôle du temps
-*** Faire avancer le temps
-Le joueur peut, à tout moment, avancer dans le temps. Lui ne bougera
-pas, mais les robots bougeront et continueront à se diriger vers le
-joueur. S'ils l'atteignent, il mourra.
+Robotime
 
-   - [ ] Il ne faut pas que le joueur voie tout ce qu'il se passe, on
-     peut par exemple faire apparaître un brouillard autour de lui, de
-     façon à cacher la majorité des robots (voir tous)
+#+CAPTION: robotime's screenshot
+[[screenshot.png]]
 
-*** Reculer dans le temps
-Le joueur peut aussi, quand il a les pouvoirs suffisants, faire
-reculer le temps. Les robots retourneront donc sur leurs
-chemins. Attention, si le joueur se trouve sur le chemin d'un robot,
-il mourra.
+Robotime is basically a [[http://en.wikipedia.org/wiki/Robots_(computer_game)][robots]]-like game made with [[http://cliki.net][Common Lisp]]
+It is made for the [[http://dto.github.com/notebook/2010expo.html][2010 International Lisp Games Expo]] and for the
+[[http://www.games-creators.org/wiki/Novendiales][Novendiales(fr)]].
 
-** Déplacement:
-Le joueur ansi que les robots peuvent se déplacer selon toutes les
-directions possibles (ligne droite et diagonale). Lorsque le joueur
-fait avancer ou reculer le temps, les robots bougent mais lui est immobile.
+* Install and play
+** Dependencies
+You need a correct Common Lisp implementation (look at [[http://sbcl.sourceforge.net/][SBCL]] for
+Unix-based systems and [[http://www.clozure.com/clozurecl.html][Clozure CL]] for Windows or OS X).
+Also, be sure to have [[http://www.cliki.net/asdf][ASDF]] installed (provided with SBCL, don't know
+for Clozure CL).
+There are only two libraries needed for robotime: [[http://www.cliki.net/Alexandria][Alexandria]] and
+[[http://github.com/sykopomp/until-it-dies][Until It Dies]].
 
-** Jauge de pouvoir
-La jauge de pouvoir permet au joueur de faire reculer le temps. Son
-niveau augmentera quand:
-  - Le joueur fera avancer le temps
-  - Le joueur rammassera des bonus de pouvoir ou des débris de robots
+*** Alexandria
+You can easily install Alexandria with [[http://www.cliki.net/ASDF-Install][ASDF-Install]]:
 
-** Robots
-Les robots se déplacent vers le joueur. Ils sont détruits soit via un
-bonus interférences, soit en entrant en collision avec un autre robot.
+#+BEGIN_SRC common-lisp
+(require :asdf)
+(require :asdf-install)
+(asdf-install:install 'alexandria)
+#+END_SRC
 
-Lorsqu'ils sont détruits, il reste un tas de circuits électroniques,
-que le joueur peut ramasser pour gagner du pouvoir.
+*** Until It Dies
+Since Until It Dies is a fairly new library, it's only available
+through the git repo at github, and robotime needs it's devel
+branch. Basically, here are the steps to install it (on an Unix-based
+system):
 
-Lorsque le joueur recule dans le temps et qu'un tas de circuits
-atteint l'époque à laquelle il est mort, le robot rescussite (sauf si
-le tas de circuits a été rammassé) et retourne sur ses pas.
+#+BEGIN_SRC shell
+$ cd ~/.sbcl/site/
+$ git clone -b devel http://github.com/sykopomp/until-it-dies.git
+$ ln -s `pwd`/until-it-dies/*.asd ~/.sbcl/systems/
+#+END_SRC
 
-Quand le temps avance après avoir reculé, les robots ne prennent pas
-spécialement la même direction qu'avant, vu que les conditions de jeu
-ont changées.
+** Robotime
+Now you can install robotime:
+
+#+BEGIN_SRC shell
+$ hg clone http://hg.awesom.eu/robotime/
+$ ln -s `pwd`/robotime/robotime.asd ~/.sbcl/systems/
+#+END_SRC
+
+And to launch it:
+
+#+BEGIN_SRC shell
+$ cd robotime
+$ ./robotime.sh
+#+END_SRC
+
+* Gameplay
+Robotime is a robots-like game. Robots is an old turn-based game (you
+can test the original one by installing ~bsdgames~ if you're under
+Linux) with a very simple principle: "Robots is played on a
+two-dimensional rectangular grid. The objective of the game is to
+escape from a number of robots, which have been programmed with only a
+single objective: to kill the player." (from Wikipedia).
+
+Robotime has some differences with the original robots games:
+
+
+** Time control
+You can control the time in both directions (forward and backward). If
+you go back in the time, robots will backtrack and you'll lose some
+power. If you advance the time, the robots will move in your direction
+and you'll gain power. You can also gain power with some bonus. When
+you control the time, you can't move, so be carefull not to be caught
+by robots. If you die, you'll simply be teleported somewhere else on
+the grid.
 
 ** Bonus
-Au fur et à mesure du jeu, des bonus apparaissent sur la carte.
-  - Bonus de pouvoir: fait augmenter le niveau de la jauge de
-    pouvoir. Bonus le plus fréquent
-  - Bonus bonus: fait augmenter la fréquence d'apparition des bonus.
-  - Bonus malus: fait diminuer la fréquence d'apparition des malus
-  - Bonus interférences: provoque des interférences qui détruisent les
-    robots présents dans un certain rayon.
-  - Bonus pause: les robots s'arrêtent pendant un certain temps, mais
-    le joueur peut continuer à se déplacer
+There are two kinds of bonus in the game, which appears and disappears
+randomly if the player don't take them:
+    - A power bonus which increase your power
+    - A blast bonus which gives you one more blast. You can use a
+      blast by pressing space, it'll blow some robots that are near
+      you.
+** The grid
+The grid is a 20x40 isometric grid
 
-Attention, quand le temps remonte, les bonus non ramassés
-réapparaissent, mais pas ceux qui ont déjà été ramassés
-Les bonus restent affichés pour une durée limitée.
+* Conclusion
+** Lisp
+Lisp is very usefull for rapid game prototyping. The game had to be
+done in nine days, but after 2 days it was already playable (with
+awful graphics). [[http://en.wikipedia.org/wiki/Common_Lisp_Object_System][CLOS]] is very nice to use and provides usefull things
+(around methods etc.). Also,  [[http://www.paulgraham.com/onlisp.htm][macros]] allows you to save a lot of lines of
+code. By example, here's how the power bonus is defined:
 
-** Malus
-Les malus apparraissent sous forme de zones assez grandes pour forcer
-le joueur à y aller.
-  - Malus robot: fait réapparaître un robot dans le jeu
-  - Malus pouvoir: fait diminuer le niveau de pouvoir du joueur
-  - Malus bonus: fait diminuer la fréquence d'apparition des bonus
-  - Malus malus: fait augmenter la fréquence d'apparition des malus
+#+BEGIN_SRC common-lisp
+(defvar *power-bonus-tile* (load-image "bonus.png"))
+(new-bonus power *power-bonus-tile*
+  (add-power player 10))
+#+END_SRC
 
-** Niveaux
-Une fois que tous les robots d'un niveau sont morts, on passe au
-niveau suivant avec:
-  - Plus de robots au départ
-  - Une fréquence de bonus moins élevée et de bonus plus élevée
-  - Une jauge de pouvoir plus petite
+And here's how it would be defined without the =new-bonus= macro:
 
-** Plateau
-Le plateau de jeu est carré, constitué de 32 cases de côté, chacune de
-taille 16x16.
+#+BEGIN_SRC common-lisp
+(defclass power-bonus (bonus) 
+  ())
+(defmethod draw ((bonus power-bonus))
+  (when (alivep bonus)
+    (draw-at (x bonus) (y bonus) *power-bonus-tile*)))
+(defmethod collision ((player player) (bonus power-bonus))
+  (when (alivep bonus)
+    (add-power player 10))))))
+#+END_SRC
+
+It might be ok for some bonus only, but with the =new-bonus= macro I
+can define easily a lot of new bonus, without repeating everytime the
+same code.
+
+** Libraries
+Common Lisp has [[http://www.cliki.net/Library][a lot]] of libraries, but when it comes to games related
+libraries, there are only two or three libraries. Or rather, there
+*were* two or three libraries, because those dto's ILGE has motived
+some people to work on games related libraries, and now there are much
+more good games libs and bindings (see [[http://www.cliki.net/LispGameJam][here]]). Even if most of them are
+not officially released and still in developpement, they're quite
+usable, and if you encounter some bugs you can still contact the
+author's on ~#lisp~ or ~#lispgames~.
+
+** Graphic Stuff
+[[http://3bb.cc/blog/2010/07/08/igle 2010 postmortem/][3b's entry]] made me discover [[http://opengameart.org/][OpenGameArt.org]]. Those kinds of site are
+really usefull, but really lack of content. I know a bit of gimp,
+inkscape and blender, but I don't have the knowledge to create my own
+graphic stuff. I think graphics are what free games miss the most, and
+sites like OpenGameArt might help with that, but apparently they're
+not really known from graphists (but, do graphists really care about
+free sofwares ?).
+
+* Contact
+Any feedback, suggestions, bug reports, etc. is welcome at ~#lispgames~
+(~irc.freenode.org~) or in french at ~#GCN~ (~irc.langochat.org~).
