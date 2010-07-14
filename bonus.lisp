@@ -1,8 +1,8 @@
 (in-package robotime)
 
 (defparameter *bonus-frequency* 15)
-(defparameter *frequencies* '(power-bonus blast-bonus))
-(defparameter *frequencies-length* (length *frequencies*))
+(defparameter *bonus* '(power blast))
+(defparameter *n-bonus* (length *bonus*))
 (defvar *power-bonus-tile* (load-image "bonus.png"))
 (defvar *blast-bonus-tile* (load-image "bonus2.png"))
 (defvar *last-spawn* 0)
@@ -31,7 +31,7 @@
 ;; Spawn related stuff
 ;; TODO: there are a lot of improvements to do here
 (defun random-bonus (case)
-  (make-instance (nth (random *frequencies-length*) *frequencies*)
+  (make-instance (nth (random *n-bonus*) *bonus*)
                  :x (first case) :y (second case)
                  :time-born *actual-time*
                  :time-died (+ *actual-time* 20))) ; TODO: add some randomness

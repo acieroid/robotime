@@ -30,6 +30,7 @@
                       ,@(rest clause)))
                   clauses)))))
 
+;; TODO: could be better
 (defmethod move-robot ((robot robot) (player player))
   (when (alivep robot)
     (let ((direction
@@ -56,9 +57,8 @@
                                    *dead-robot-tile*)))
 
 (defmethod collision ((player player) (robot robot))
-  (if (alivep robot)
-    (setf (item-position player) (random-case))
-    (setf (uselessp robot) t)))
+  (when (alivep robot)
+    (setf (item-position player) (random-case))))
 
 (defmethod collision ((a robot) (b robot))
   (when (alivep a)

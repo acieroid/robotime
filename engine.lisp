@@ -61,7 +61,7 @@
   (let ((new-bonus (spawn-bonus-when-needed (player game) (entities game))))
     (when new-bonus
       (push new-bonus (entities game))))
-  (when (null (robots game))
+  (when (null (remove-if-not #'alivep (robots game)))
     (levelup game)))
 
 (defun update-player-collisions (player entities)
@@ -151,9 +151,9 @@
 (defmethod uid:on-draw ((game robotime))
   (uid:clear game)
   (draw (board game))
-  (draw (player game))
   (mapcar #'draw (entities game))
   (mapcar #'draw (robots game))
+  (draw (player game))
   (draw-ui game))
 
 ;; Keybindings
@@ -200,6 +200,7 @@
     (mapcar #'move-backward (robots game))
     (add-power (player game) -3)))
 
+;; TODO: something that works with isometric maps
 (defkey blast
   (when (plusp (blasts (player game)))
     (decf (blasts (player game)))
