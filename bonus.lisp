@@ -1,8 +1,11 @@
 (in-package robotime)
 
-(defparameter *bonus-frequency* 15)
 (defparameter *bonus* '(power blast))
 (defparameter *n-bonus* (length *bonus*))
+(defparameter *bonus-min-frequency* 5)
+(defparameter *bonus-max-frequency* 25)
+(defparameter *bonus-min-duration* 20)
+(defparameter *bonus-max-duration* 40)
 (defvar *power-bonus-tile* (load-image "bonus.png"))
 (defvar *blast-bonus-tile* (load-image "bonus2.png"))
 (defvar *last-spawn* 0)
@@ -29,16 +32,18 @@
   (add-blast player))
 
 ;; Spawn related stuff
-;; TODO: there are a lot of improvements to do here
 (defun random-bonus (case)
   (make-instance (nth (random *n-bonus*) *bonus*)
                  :x (first case) :y (second case)
                  :time-born *actual-time*
-                 :time-died (+ *actual-time* 20))) ; TODO: add some randomness
+                 :time-died (+ *actual-time* *bonus-min-duration*
+                               (random
+                                (- *bonus-max-duration* *bonus-min-duration*)))))
 
 (defun spawn-needed ()
   (and (> *actual-time* *last-spawn*)   ; don't spawn if we're in the past
-       (<= (+ *last-spawn* *bonus-frequency*)
+       (<= (+ *last-spawn* *bonus-min-frequency*
+              (random (- *bonus-max-frequency* *bonus-min-frequency*)))
           *actual-time*)))               ; TODO: add some randomness here too
 
 (defun find-free-case (player entities)
