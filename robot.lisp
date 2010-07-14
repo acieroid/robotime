@@ -58,7 +58,8 @@
 
 (defmethod collision ((player player) (robot robot))
   (when (alivep robot)
-    (setf (item-position player) (random-case))))
+    (setf (item-position player) (random-case))
+    (incf *lifes-used*)))
 
 (defmethod collision ((a robot) (b robot))
   (when (alivep a)

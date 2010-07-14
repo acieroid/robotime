@@ -1,5 +1,7 @@
 (in-package robotime)
 
+(defvar *lifes-used* 0)
+
 (defclass entity (graphic-item)
   ((time-born :reader time-born :initarg :time-born)
    (time-died :accessor time-died :initform -1 :initarg :time-died)

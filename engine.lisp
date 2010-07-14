@@ -131,13 +131,14 @@
                         :x ,x :y (- ,y ,offset))))))
 
 (defmethod draw-ui ((game robotime))
-  (draw-power (- (uid:width game) (* 2 *power-width)) 10
+  (draw-power (- (uid:width game) (* 2 *power-width*)) 10
               (power (player game)) (max-power (player game)))
   (draw-informations 10 (- (uid:height game) 50) 10
     ("time: ~a" *actual-time*)
     ("robots: ~a" (loop for robot in (robots game) count (alivep robot)))
     ("level: ~a" *level*)
-    ("blasts: ~a" (blasts (player game)))))
+    ("blasts: ~a" (blasts (player game)))
+    ("lifes used: ~a" *lifes-used*)))
 
 ;;; UID functions
 (defmethod uid:init ((game robotime))
