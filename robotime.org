@@ -1,11 +1,9 @@
 Robotime
 
-#+CAPTION: robotime's screenshot
-[[screenshot.png]]
-
-Robotime is basically a [[http://en.wikipedia.org/wiki/Robots_(computer_game)][robots]]-like game made with [[http://cliki.net][Common Lisp]]
+Robotime is a [[http://en.wikipedia.org/wiki/Robots_(computer_game)][robots]]-like game made with [[http://cliki.net][Common Lisp]]
 It is made for the [[http://dto.github.com/notebook/2010expo.html][2010 International Lisp Games Expo]] and for the
-[[http://www.games-creators.org/wiki/Novendiales][Novendiales(fr)]].
+[[http://www.games-creators.org/wiki/Novendiales][Novendiales(fr)]] (the theme was "time control). A screenshot is
+available [[file:screenshot.png][here]].
 
 * Install and play
 ** Dependencies
@@ -121,7 +119,7 @@ some people to work on games related libraries, and now there are much
 more good games libs and bindings (see [[http://www.cliki.net/LispGameJam][here]]). Even if most of them are
 not officially released and still in developpement, they're quite
 usable, and if you encounter some bugs you can still contact the
-author's on ~#lisp~ or ~#lispgames~.
+authors on ~#lisp~ or ~#lispgames~.
 
 ** Graphic Stuff
 [[http://3bb.cc/blog/2010/07/08/igle 2010 postmortem/][3b's entry]] made me discover [[http://opengameart.org/][OpenGameArt.org]]. Those kinds of site are
@@ -131,6 +129,13 @@ graphic stuff. I think graphics are what free games miss the most, and
 sites like OpenGameArt might help with that, but apparently they're
 not really known from graphists (but, do graphists really care about
 free sofwares ?).
+
+The graphics I used are:
+  - [[http://opengameart.org/content/knights-monsters-stairs-more][Knights, monsters, stairs & more]], by artisticdude, licensed as
+    GPLv3
+  - [[http://opengameart.org/content/towers-of-defense][Towers of defense]], by bart, public domain
+  - [[http://opengameart.org/content/freeciv-ft-tileset-terrain2png][FreeCiv FT Tileset: terrain2]], licensed as GPLv2
+  - The bonus sphere was made with inkscape with [[http://ryanler.wordpress.com/2007/02/16/simple-bubble-in-inkscape-orb-ball-bubble/][this post]].
 
 * Contact
 Any feedback, suggestions, bug reports, etc. is welcome at ~#lispgames~
