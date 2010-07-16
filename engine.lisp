@@ -4,19 +4,18 @@
 (defvar *level* 1)
 
 (eval-when (:compile-toplevel)
-  (defparameter *keys*                        ; TODO: add qwerty bindings
-    '((quit . :escape)
-      (left . (:left :a))
-      (right . (:right :i))
-      (up . (:up :eacute))
-      (down . (:down :y))
-      (upleft . :b)
-      (upright . :p)
-      (downleft . :agrave)
-      (downright . :x)
-      (forward . (:espace :u))
-      (backward . :o)
-      (blast . :space))
+  (defparameter *layout* 'qwerty)
+  (defparameter *keys*
+    `((quit . :escape) (blast . :space)
+      ,@(case *layout*
+             (bepo '((left . (:left :a)) (right . (:right :i))
+                       (up . (:up :eacute)) (down . (:down :y))
+                       (upleft . :b) (upright . :p) (downleft . :agrave)
+                       (downright . :x) (forward . :u) (backward . :o)))
+             (qwerty '((left . (:left :d)) (right . (:right :g))
+                       (up . (:up :r)) (down . (:down :v))
+                       (upleft . :e) (upright . :t) (downleft . :c)
+                       (downright . :b) (forward . :f) (backward . :y)))))
     "The actions with the associated keybindings"))
 
 (defclass robotime (uid:simple-game-engine)
@@ -78,17 +77,6 @@
                   (collision x robot)))
               rest)
       (update-robots-collisions rest))))
-
-(defun opposed-direction (dir)
-  (case dir
-    (:north :south)
-    (:south :north)
-    (:east :west)
-    (:west :east)
-    (:north-east :south-west)
-    (:north-west :south-east)
-    (:south-east :north-west)
-    (:south-west :north-east)))
 
 (defun player-can-move (player dir)
   (move player dir)

@@ -43,6 +43,25 @@
     (:south-west (if (evenp y) '(-1 -1) '(0 -1)))
     (otherwise (error "Not a valid direction: ~a" dir))))
 
+(defun opposed-direction (dir)
+  (case dir
+    (:north :south)
+    (:south :north)
+    (:east :west)
+    (:west :east)
+    (:north-east :south-west)
+    (:north-west :south-east)
+    (:south-east :north-west)
+    (:south-west :north-east)))
+
+(defun cases-around (case)
+  "Return the cases around the case CASE. Don't check if cases returned are
+in the board"
+  (loop for dir in (mapcar (lambda (dir) (get-direction dir (second case)))
+                           '(:north :south :east :west
+                             :north-east :north-west :south-east :south-west))
+       collect (case+ case dir)))
+
 (defun case= (a b)
   (and (= (first a) (first b))
        (= (second a) (second b))))
@@ -90,11 +109,3 @@
 
 (defmethod pos= ((a graphic-item) (b graphic-item))
   (case= (item-position a) (item-position b)))
-
-(defun cases-around (case)
-  "Return the cases around the case CASE. Don't check if cases returned are
-in the board"
-  (loop for dir in (mapcar (lambda (dir) (get-direction dir (second case)))
-                           '(:north :south :east :west
-                             :north-east :north-west :south-east :south-west))
-       collect (case+ case dir)))
