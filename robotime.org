@@ -2,7 +2,7 @@ Robotime
 
 Robotime is a [[http://en.wikipedia.org/wiki/Robots_(computer_game)][robots]]-like game made with [[http://cliki.net][Common Lisp]]
 It is made for the [[http://dto.github.com/notebook/2010expo.html][2010 International Lisp Games Expo]] and for the
-[[http://www.games-creators.org/wiki/Novendiales][Novendiales(fr)]] (the theme was "time control). A screenshot is
+[[http://www.games-creators.org/wiki/Novendiales][Novendiales(fr)]] (the theme was "time control"). A screenshot is
 available [[file:screenshot.png][here]].
 
 * Install and play
@@ -35,8 +35,14 @@ $ git clone -b devel http://github.com/sykopomp/until-it-dies.git
 $ ln -s `pwd`/until-it-dies/*.asd ~/.sbcl/systems/
 #+END_SRC
 
+You'll also need to install [[http://common-lisp.net/project/cl-opengl/][cl-opengl]] (available through asdf-install,
+like alexandria) and [[http://github.com/patzy/glop][glop]] (install it with the same method as
+UID). 
+
+If you encounter any problem with UID, you might try to use the commit
+~18c4895bc2bc0512a4425ab2ef23550b186ac175~ (with =git checkout=).
 ** Robotime
-Now you can install robotime:
+You can now install robotime:
 
 #+BEGIN_SRC shell
 $ hg clone http://hg.awesom.eu/robotime/
@@ -64,9 +70,9 @@ Robotime has some differences with the original robots games:
 ** Time control
 You can control the time in both directions (forward and backward). If
 you go back in the time, robots will backtrack and you'll lose some
-power. If you advance the time, the robots will move in your direction
+power. If you advance the time, robots will move in your direction
 and you'll gain power. You can also gain power with some bonus. When
-you control the time, you can't move, so be carefull not to be caught
+you control the time you can't move, so be carefull not to be caught
 by robots. If you die, you'll simply be teleported somewhere else on
 the grid.
 
@@ -77,6 +83,8 @@ randomly if the player don't take them:
     - A blast bonus which gives you one more blast. You can use a
       blast by pressing space, it'll blow some robots that are near
       you.
+
+When you go back in the time, bonus may reappear if you didn't take them.
 ** The grid
 The grid is a 20x40 isometric grid
 

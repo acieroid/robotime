@@ -1,14 +1,12 @@
 (in-package robotime)
 
-(defparameter *bonus* '(power blast))
-(defparameter *n-bonus* (length *bonus*))
 (defparameter *bonus-min-frequency* 5)
 (defparameter *bonus-max-frequency* 25)
 (defparameter *bonus-min-duration* 20)
 (defparameter *bonus-max-duration* 40)
-(defvar *power-bonus-tile* (load-image "bonus.png"))
-(defvar *blast-bonus-tile* (load-image "bonus2.png"))
 (defvar *last-spawn* 0)
+(defvar *bonus* nil)
+(defvar *n-bonus* 0)
 
 (defclass bonus (entity)
   ((duration :reader duration :initform 10)))
@@ -16,19 +14,23 @@
 (defmethod collision :after ((player player) (bonus bonus))
   (setf (uselessp bonus) t))
 
-(defmacro new-bonus (name tile &body action)
-  `(progn
-     (defclass ,name (bonus) ())
-     (defmethod draw ((bonus ,name))
-       (when (alivep bonus)
-         (draw-at (x bonus) (y bonus) ,tile)))
-     (defmethod collision ((player player) (bonus ,name))
-       (when (alivep bonus)
-         ,@action))))
+(defmacro new-bonus (name file &body action)
+  (let ((tile (gensym)))
+    `(progn
+       (let ((,tile (load-image ,file)))
+         (defclass ,name (bonus) ())
+         (defmethod draw ((bonus ,name))
+           (when (alivep bonus)
+             (draw-at (x bonus) (y bonus) ,tile)))
+         (defmethod collision ((player player) (bonus ,name))
+           (when (alivep bonus)
+             ,@action))
+         (push ',name *bonus*)
+         (incf *n-bonus*)))))
 
-(new-bonus power *power-bonus-tile*
+(new-bonus power "bonus.png"
   (add-power player 10))
-(new-bonus blast *blast-bonus-tile*
+(new-bonus blast "bonus2.png"
   (add-blast player))
 
 ;; Spawn related stuff
