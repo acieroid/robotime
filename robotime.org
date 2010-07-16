@@ -97,14 +97,14 @@ awful graphics). [[http://en.wikipedia.org/wiki/Common_Lisp_Object_System][CLOS]
 code. By example, here's how the power bonus is defined:
 
 #+BEGIN_SRC common-lisp
-(defvar *power-bonus-tile* (load-image "bonus.png"))
-(new-bonus power *power-bonus-tile*
+(new-bonus power "bonus.png"
   (add-power player 10))
 #+END_SRC
 
 And here's how it would be defined without the =new-bonus= macro:
 
 #+BEGIN_SRC common-lisp
+(defvar *power-bonus-tile* (load-image "bonus.png"))
 (defclass power-bonus (bonus) 
   ())
 (defmethod draw ((bonus power-bonus))
@@ -112,31 +112,32 @@ And here's how it would be defined without the =new-bonus= macro:
     (draw-at (x bonus) (y bonus) *power-bonus-tile*)))
 (defmethod collision ((player player) (bonus power-bonus))
   (when (alivep bonus)
-    (add-power player 10))))))
+    (add-power player 10)))
+(push 'bonus *bonus*)
+(incf *n-bonus)
 #+END_SRC
 
-It might be ok for some bonus only, but with the =new-bonus= macro I
+It might be ok for one or two bonus only, but with the =new-bonus= macro we
 can define easily a lot of new bonus, without repeating everytime the
 same code.
 
 ** Libraries
 Common Lisp has [[http://www.cliki.net/Library][a lot]] of libraries, but when it comes to games related
 libraries, there are only two or three libraries. Or rather, there
-*were* two or three libraries, because those dto's ILGE has motived
-some people to work on games related libraries, and now there are much
-more good games libs and bindings (see [[http://www.cliki.net/LispGameJam][here]]). Even if most of them are
-not officially released and still in developpement, they're quite
-usable, and if you encounter some bugs you can still contact the
-authors on ~#lisp~ or ~#lispgames~.
+/were/ two or three libraries, because those dto's ILGE has motived
+some people to work on games and games related libraries, and now
+there are much more good games libs and bindings (see [[http://www.cliki.net/LispGameJam][here]]). Even if
+most of them are not officially released and still in developpement,
+they're quite usable, and if you encounter some bugs you can still
+contact the authors on ~#lisp~ or ~#lispgames~.
 
 ** Graphic Stuff
 [[http://3bb.cc/blog/2010/07/08/igle 2010 postmortem/][3b's entry]] made me discover [[http://opengameart.org/][OpenGameArt.org]]. Those kinds of site are
-really usefull, but really lack of content. I know a bit of gimp,
+usefull, but really lack of content. I know a bit of gimp,
 inkscape and blender, but I don't have the knowledge to create my own
 graphic stuff. I think graphics are what free games miss the most, and
 sites like OpenGameArt might help with that, but apparently they're
-not really known from graphists (but, do graphists really care about
-free sofwares ?).
+not enough known from graphists.
 
 The graphics I used are:
   - [[http://opengameart.org/content/knights-monsters-stairs-more][Knights, monsters, stairs & more]], by artisticdude, licensed as
