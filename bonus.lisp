@@ -44,7 +44,7 @@
   (and (> *actual-time* *last-spawn*)   ; don't spawn if we're in the past
        (<= (+ *last-spawn* *bonus-min-frequency*
               (random (- *bonus-max-frequency* *bonus-min-frequency*)))
-          *actual-time*)))               ; TODO: add some randomness here too
+          *actual-time*)))
 
 (defun find-free-case (player entities)
   (let ((cases (cons (item-position player) (mapcar #'item-position entities))))

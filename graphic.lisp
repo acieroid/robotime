@@ -31,6 +31,18 @@
     (or dir1 dir2)
     (car (intersection (directions dir1) (directions dir2)))))
 
+(defun get-direction (dir y)
+  (case dir
+    (:north '(0 2))
+    (:south '(0 -2))
+    (:east '(1 0))
+    (:west '(-1 0))
+    (:north-east (if (evenp y) '(0 1) '(1 1)))
+    (:north-west (if (evenp y) '(-1 1) '(0 1)))
+    (:south-east (if (evenp y) '(0 -1) '(1 -1)))
+    (:south-west (if (evenp y) '(-1 -1) '(0 -1)))
+    (otherwise (error "Not a valid direction: ~a" dir))))
+
 (defun case= (a b)
   (and (= (first a) (first b))
        (= (second a) (second b))))
@@ -78,3 +90,11 @@
 
 (defmethod pos= ((a graphic-item) (b graphic-item))
   (case= (item-position a) (item-position b)))
+
+(defun cases-around (case)
+  "Return the cases around the case CASE. Don't check if cases returned are
+in the board"
+  (loop for dir in (mapcar (lambda (dir) (get-direction dir (second case)))
+                           '(:north :south :east :west
+                             :north-east :north-west :south-east :south-west))
+       collect (case+ case dir)))

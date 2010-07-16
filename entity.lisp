@@ -19,19 +19,9 @@
 
 (defmethod move :after ((entity entity) direction)
   (when direction
-    (let ((dir
-           (case direction
-             (:north '(0 2))
-             (:south '(0 -2))
-             (:east '(1 0))
-             (:west '(-1 0))
-             (:north-east (if (evenp (y entity)) '(0 1) '(1 1)))
-             (:north-west (if (evenp (y entity)) '(-1 1) '(0 1)))
-             (:south-east (if (evenp (y entity)) '(0 -1) '(1 -1)))
-             (:south-west (if (evenp (y entity)) '(-1 -1) '(0 -1)))
-             (otherwise (error "Not a valid direction: ~a" direction)))))
-      (setf (item-position entity) (case+ (item-position entity)
-                                          dir)))))
+    (setf (item-position entity) (case+ (item-position entity)
+                                        (get-direction direction
+                                                       (y entity))))))
 
 (defmethod alivep ((entity entity))
   (and (<= (time-born entity) *actual-time*)

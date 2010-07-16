@@ -1,6 +1,5 @@
 (in-package robotime)
 
-(defparameter *blast-ray* 2)
 (defparameter *difficulty-by-level* 5)
 (defvar *level* 1)
 
@@ -23,7 +22,7 @@
 (defclass robotime (uid:simple-game-engine)
   ((board :reader board :initform (make-instance 'board))
    (player :reader player :initform (make-player))
-   (entitie :accessor entities :initform nil)  ; TODO: rename as bonus
+   (entities :accessor entities :initform nil)
    (robots :accessor robots :initform nil))
   (:default-initargs :title "Robotime"
     :fps-limit 30
@@ -112,13 +111,12 @@
   (setf (robots game) (remove-if #'uselessp (robots game))))
 
 (defun blast (center robots)
-  (destructuring-bind (x y) center
+  (let ((cases (cases-around center)))
     (mapcar
-     (lambda (r)
-       (when (and (>= (x r) x) (>= (y r) y)
-                  (<= (x r) (+ x *blast-ray*))
-                  (<= (y r) (+ y *blast-ray*)))
-         (kill r)))
+     (lambda (robot)
+       (when (find (item-position robot) cases
+                   :test #'case=)
+         (kill robot)))
      robots)))
 
 (defmacro draw-informations (x y step &rest infos)
@@ -201,7 +199,6 @@
     (mapcar #'move-backward (robots game))
     (add-power (player game) -3)))
 
-;; TODO: something that works with isometric maps
 (defkey blast
   (when (plusp (blasts (player game)))
     (decf (blasts (player game)))
