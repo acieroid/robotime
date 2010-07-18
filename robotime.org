@@ -56,16 +56,34 @@ $ cd robotime
 $ ./robotime.sh
 #+END_SRC
 
+*** Keybindings
+| Action            | Key    |
+|-------------------+--------|
+| Move north        | r      |
+| Move south        | v      |
+| Move west         | d      |
+| Move east         | g      |
+| Move north-west   | e      |
+| Move north-east   | t      |
+| Move south-west   | c      |
+| Move south-east   | b      |
+| Forward the time  | f      |
+| Backward the time | y      |
+| Use a blast       | space  |
+| Quit              | escape |
+
 * Gameplay
 Robotime is a robots-like game. Robots is an old turn-based game (you
 can test the original one by installing ~bsdgames~ if you're under
-Linux) with a very simple principle: "Robots is played on a
-two-dimensional rectangular grid. The objective of the game is to
-escape from a number of robots, which have been programmed with only a
-single objective: to kill the player." (from Wikipedia).
+Linux) with a very simple principle: 
+
+#+BEGIN_QUOTE
+Robots is played on a two-dimensional rectangular grid. The objective
+of the game is to escape from a number of robots, which have been
+programmed with only a single objective: to kill the player. -- Wikipedia
+#+END_QUOTE
 
 Robotime has some differences with the original robots games:
-
 
 ** Time control
 You can control the time in both directions (forward and backward). If
