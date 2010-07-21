@@ -35,12 +35,21 @@ $ git clone -b devel http://github.com/sykopomp/until-it-dies.git
 $ ln -s `pwd`/until-it-dies/*.asd ~/.sbcl/systems/
 #+END_SRC
 
-You'll also need to install [[http://common-lisp.net/project/cl-opengl/][cl-opengl]] (available through asdf-install,
-like alexandria) and [[http://github.com/patzy/glop][glop]] (install it with the same method as
-UID). 
+You'll also need to install UID's dependencies: 
+
+  - Available through asdf-install, like alexandria: 
+    - [[http://common-lisp.net/project/cl-opengl/][cl-opengl]]
+    - [[http://www.xach.com/lisp/zpb-ttf/][zpb-ttf]]
+  - To install with the same method as UID:
+    - [[http://github.com/patzy/glop][glop]]
+    - [[http://github.com/sykopomp/cl-openal][cl-openal]]
+    - [[http://github.com/sykopomp/cl-devil][cl-devil]] 
+
+Of course you'll need to install [[http://openil.sourceforge.net/][devil]], [[http://connect.creativelabs.com/openal/default.aspx][openal]], the opengl libs, and [[http://sourceforge.net/projects/ftgl/][ftgl]].
 
 If you encounter any problem with UID, you might try to use the commit
 ~18c4895bc2bc0512a4425ab2ef23550b186ac175~ (with =git checkout=).
+
 ** Robotime
 You can now install robotime:
 

@@ -8,7 +8,8 @@
 (defparameter *tile-height* (/ *tile-width* 4))
 (defparameter *n-cases-x* 20)
 (defparameter *n-cases-y* 40)
-(defparameter *ressources-dir* #p"/home/quentin/robotime/ressources/")
+(defparameter *resources-dir* (merge-pathnames "resources/"
+                                               *default-pathname-defaults*))
 ;; This gets defined here cause we use it everywhere
 (defvar *actual-time* 0 "The actual time of the game")
 
@@ -81,7 +82,7 @@ in the board"
 
 (defun load-image (name)
   (make-instance 'uid:image
-                :texture-filepath (merge-pathnames *ressources-dir*
+                :texture-filepath (merge-pathnames *resources-dir*
                                                     name)))
 (defun draw-at (x y drawable)
   (uid:draw drawable
