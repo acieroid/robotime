@@ -1,6 +1,6 @@
 Robotime
 
-Robotime is a [[http://en.wikipedia.org/wiki/Robots_(computer_game)][robots]]-like game made with [[http://cliki.net][Common Lisp]]
+Robotime is a [[http://en.wikipedia.org/wiki/Robots_(computer_game)][robots]]-like game made with [[http://cliki.net][Common Lisp]].
 It is made for the [[http://dto.github.com/notebook/2010expo.html][2010 International Lisp Games Expo]] and for the
 [[http://www.games-creators.org/wiki/Novendiales][Novendiales(fr)]] (the theme was "time control"). A screenshot is
 available [[file:screenshot.png][here]].
@@ -25,7 +25,7 @@ You can easily install Alexandria with [[http://www.cliki.net/ASDF-Install][ASDF
 
 *** Until It Dies
 Since Until It Dies is a fairly new library, it's only available
-through the git repo at github, and robotime needs it's devel
+through the git repo at github, and robotime needs its devel
 branch. Basically, here are the steps to install it (on an Unix-based
 system):
 
@@ -63,6 +63,13 @@ And to launch it:
 #+BEGIN_SRC shell
 $ cd robotime
 $ ./robotime.sh
+#+END_SRC
+
+If you get a =CL-DEVIL:COULD-NOT-OPEN-FILE= condition, you can adapt
+the variable =*resources-dir*= in ~graphic.lisp~, eg. :
+
+#+BEGIN_SRC common-lisp
+(defparameter *resources-dir* #p"/home/user/robotime/resources/")
 #+END_SRC
 
 *** Keybindings
@@ -104,24 +111,24 @@ by robots. If you die, you'll simply be teleported somewhere else on
 the grid.
 
 ** Bonus
-There are two kinds of bonus in the game, which appears and disappears
-randomly if the player don't take them:
-    - A power bonus which increase your power
+There are two kinds of bonus in the game, which appear and disappear
+randomly if the player does not take them:
+    - A power bonus which increases your power
     - A blast bonus which gives you one more blast. You can use a
       blast by pressing space, it'll blow some robots that are near
       you.
 
 When you go back in the time, bonus may reappear if you didn't take them.
 ** The grid
-The grid is a 20x40 isometric grid
+The grid is a 20x40 isometric grid.
 
 * Conclusion
 ** Lisp
-Lisp is very usefull for rapid game prototyping. The game had to be
+Lisp is very useful for rapid game prototyping. The game had to be
 done in nine days, but after 2 days it was already playable (with
-awful graphics). [[http://en.wikipedia.org/wiki/Common_Lisp_Object_System][CLOS]] is very nice to use and provides usefull things
+awful graphics). [[http://en.wikipedia.org/wiki/Common_Lisp_Object_System][CLOS]] is very nice to use and provides useful things
 (around methods etc.). Also,  [[http://www.paulgraham.com/onlisp.htm][macros]] allows you to save a lot of lines of
-code. By example, here's how the power bonus is defined:
+code. For example, here's how the power bonus is defined:
 
 #+BEGIN_SRC common-lisp
 (new-bonus power "bonus.png"
@@ -141,11 +148,11 @@ And here's how it would be defined without the =new-bonus= macro:
   (when (alivep bonus)
     (add-power player 10)))
 (push 'bonus *bonus*)
-(incf *n-bonus)
+(incf *n-bonus*)
 #+END_SRC
 
 It might be ok for one or two bonus only, but with the =new-bonus= macro we
-can define easily a lot of new bonus, without repeating everytime the
+can define easily a lot of new bonuses, without repeating everytime the
 same code.
 
 ** Libraries
