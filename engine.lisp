@@ -4,7 +4,7 @@
 (defvar *level* 1)
 
 (eval-when (:compile-toplevel)
-  (defparameter *layout* 'qwerty)
+  (defparameter *layout* 'bepo)
   (defparameter *keys*
     `((quit . :escape) (blast . :space)
       ,@(case *layout*
@@ -117,7 +117,7 @@
                         :x ,x :y (- ,y ,offset))))))
 
 (defmethod draw-ui ((game robotime))
-  (draw-power (- (uid:width game) (* 2 *power-width*)) 10
+  (draw-power (- (uid:width game) (* 2 *power-width*)) 40
               (power (player game)) (max-power (player game)))
   (draw-informations 10 (- (uid:height game) 50) 10
     ("time: ~a" *actual-time*)
@@ -180,7 +180,8 @@
   (add-power (player game) 3))
 
 (defkey backward
-  (when (plusp (power (player game)))
+  (when (and (>= (power (player game)) 3)
+             (plusp *actual-time*))
     (decf *actual-time*)
     (update-player-collisions (player game) (entities game))
     (update-player-collisions (player game) (robots game))

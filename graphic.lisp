@@ -17,7 +17,8 @@
   (uid:draw-rectangle x y *power-width*
                       (* (/ value max-value) *power-height*)
                       :color *power-color*)
-  (uid:draw-rectangle x y *power-width* *power-height* :filledp nil))
+  (uid:draw-rectangle x y *power-width* *power-height* :filledp nil)
+  (uid:draw (format nil "power: ~d/~d" value max-value) :x (- x 20) :y (- y 20)))
 
 (defun directions (dir)
   (case dir
